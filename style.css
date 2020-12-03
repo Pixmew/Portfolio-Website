@@ -26,7 +26,7 @@
     font-weight: 600;
 }
 .navbar .logo a span{
-    color: crimson;
+    color: dodgerblue;
 }
 .navbar .max-width{
     display: flex;
@@ -45,7 +45,7 @@
     transition: color 0.3s ease;
 }
 .navbar .menu li a:hover{
-    color: crimson;
+    color: dodgerblue;
 }
 
 /*home section styling*/
@@ -73,6 +73,6 @@
     margin: 5px 0;
 }
 .home .home-content .text-3 span{
-    color: crimson;
+    color: dodgerblue;
     font-weight: 500;
 }
