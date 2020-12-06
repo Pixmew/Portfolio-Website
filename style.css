@@ -7,7 +7,8 @@ body{
 a{
     text-decoration: none;
 }
-/*Navigation Bar Styling*/
+
+/*Home Page Styling*/
 #main{
     width: 100%;
     height: 100vh;
@@ -15,6 +16,8 @@ a{
     background-color: #edf1fd;
     position: relative;
 }
+
+/*Navigation Bar Styling*/
 .navbar{
     display: flex;
     align-items: center;
@@ -44,8 +47,47 @@ a{
     font-size: 15px;
 }
 .navbar .menu li a:hover{
-    background-color: #292929;
+    background-color: #e8a13f;
     color: #fff;
     transition: all 0.5s ease;
     font-weight: 700;
+}
+
+/**home page content Styling*/
+.home-content{
+    position: absolute;
+    font-family: 'Poppins' ,sans-serif;
+    width : 500px;
+    top: 50%;
+    left: 20%;
+    transform: translate(-20% ,-50%);
+    letter-spacing: 1px;
+}
+.home-content h1{
+    letter-spacing: 3px;
+    font-size: 40px;
+    color: #292929;
+}
+.home-content p:nth-child(3){
+    font-weight: 500;
+}
+.home-content p span{
+    font-size: 25px;
+    padding-left: 10px;
+}
+.home-content p span ,.home-content h1 span{
+    color: #e8a13f;
+}
+.home-content .cv-btn{
+    display: flex;
+    width: 200px;
+    height: 45;
+    background-color: #292929;
+    color: #fff;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+.home-content .cv-btn:hover{
+    background-color: #131313;
 }
