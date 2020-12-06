@@ -58,9 +58,9 @@ a{
     position: absolute;
     font-family: 'Poppins' ,sans-serif;
     width : 500px;
-    top: 50%;
-    left: 20%;
-    transform: translate(-20% ,-50%);
+    top: 40%;
+    left: 10%;
+    /* transform: translate(-20% ,-50%); */
     letter-spacing: 1px;
 }
 .home-content h1{
