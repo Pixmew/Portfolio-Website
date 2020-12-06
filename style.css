@@ -1,143 +1,51 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400&family=Ubuntu:ital,wght@0,400;0,700;1,400&display=swap');
-*{
+body{
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    background-color: #161616;
+}
+a{
     text-decoration: none;
 }
-
-/* Navigation Bar section styling */
-.max-width{
-   max-width: 1700px;
-  padding: 0px 30px;
-  margin: auto;
+/*Navigation Bar Styling*/
+#main{
+    width: 100%;
+    height: 100vh;
+    box-sizing: border-box;
+    background-color: #edf1fd;
+    position: relative;
 }
-
 .navbar{
-    position : fixed;
-    padding: 15px;
-    width:100%;
-    font-family : 'Ubuntu' , sans-serif;
-
-}
-.navbar .logo a{
-    color: #fff;
-    font-size: 35px;
-    font-weight: 600;
-}
-.navbar .logo a span{
-    color: dodgerblue;
-}
-.navbar .max-width{
     display: flex;
     align-items: center;
     justify-content: space-between;
+    font-family: 'Ubuntu' , sans-serif;
+    letter-spacing: 2px;
+    position: fixed;
+    font-weight: 600;
+    width: 100%;
+    top: 0;
+    left : 0;
+    box-sizing: border-box;
+    box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: 10px;
+    background-color: #f4f7ff;
+}
+.navbar .menu{
+    margin-right: 30px;
 }
 .navbar .menu li{
-    list-style: none;
-    display: inline-block
+    display: inline-flex;
 }
 .navbar .menu li a{
-    color : #fff;
-    font-size: 18px;
-    font-weight: 500;
-    margin-left: 25px;
-    transition: color 0.3s ease;
+    padding: 10px 1.5vw;
+    color: #6c707c;
+    font-size: 15px;
 }
 .navbar .menu li a:hover{
-    color: dodgerblue;
-}
-/*menu button styling*/
-.menu-btn{
-    display : none;
-}
-.menu-btn a{
+    background-color: #292929;
     color: #fff;
-    font-size: 18px;
+    transition: all 0.5s ease;
+    font-weight: 700;
 }
-
-
-/*home section styling*/
-.home{
-    display: flex;
-    background: url("Images/Black.jpg") no-repeat center;
-    height: 100vh;
-    color: #fff;
-    font-family : 'Ubuntu' , sans-serif;
-    align-items: center;
-}
-.home .text-1{
-    font-size: 3vh;
-}
-.home .text-2{
-    font-size: 9vh;
-
-}
-.home .text-3{
-    font-size: 4vh;
-}
-.home .text-3 span{
-    color: dodgerblue;
-    font-weight: 500;
-}
-.home .hire a{
-    color: #fff;
-    font-size: 3.5vh;
-}
-
-
-
-/* About Me Styling */
-section{
-    padding: 40px;
-}
-.Aboutme .About-title{
-    position: relative;
-    text-align: center;
-    font-size: 30px;
-    font-weight: 500;
-    font-family: 'Ubuntu' , sans-serif;
-    margin-bottom: 40px;
-    padding-bottom: 10px;
-}
-.Aboutme .About-content .About-paragraph{
-    font-family: 'Poppins' , sans-serif;
-}
-.Aboutme .About-content .About-img{
-    height : 400px;
-    width : 400px;
-    object-fit:  : cover;
-}
-
-
-
-
-/*Resposive media query start
-@media (max-width :731px) {
-    .max-width{
-        padding: 0 5px;
-    }
-    .navbar .menu-btn{
-        display: block;
-        z-index: 999;
-    }
-    .navbar .menu{
-        position: fixed;
-        height : 100vh;
-        width : 100%;
-        left: 0;
-        top: 0;
-        background: #111;
-        text-align: center;
-        padding: 80px;
-    }
-    .navbar .menu li{
-        display: block;
-    }
-    .navbar .menu li a{
-        display: inline-block;
-        margin: 20px 0;
-        font-size: 25px;
-    }
-
-}*/
