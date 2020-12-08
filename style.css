@@ -13,7 +13,8 @@ a{
     width: 100%;
     height: 100vh;
     box-sizing: border-box;
-    background-color: #edf1fd;
+    /* background-image: linear-gradient(to top left , rgba(3, 132, 252) , rgba(194, 226, 255)); */
+    background : #edf1fd; 
     /* background-image: url(Images/space2.jpg);
     background-repeat: no-repeat;
     background-size: cover; */
@@ -36,7 +37,7 @@ a{
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
     z-index: 1;
     padding: 10px;
-    background-color: #f4f7ff;
+    background-color: #f9f9ff;
 }
 .navbar .menu{
     margin-right: 30px;
@@ -50,7 +51,7 @@ a{
     font-size: 15px;
 }
 .navbar .menu li a:hover{
-    background-color: #e8a13f;
+    background-color: #000;
     color: #fff;
     transition: all 0.5s ease;
     font-weight: 700;
@@ -108,12 +109,13 @@ a{
 }
 .social i{
     color: rgba(18,17,17,0.4);
-    font-size: 14px;
+    font-size: 20px;
 }
 .social a:hover i{
     color: #17d1ac;
     transition: all 0.5s ease;
 }
+
 
 
 /*About me section styling*/
@@ -127,22 +129,39 @@ a{
 }
 
 .about-title {
-  position: relative;
-    color: #fff;
+    position: relative;
     font-family: 'Ubuntu' ,sans-serif;
     display: flex;
     flex-direction: column;
     padding-bottom: 20px;
     margin-bottom: 40px;
     text-align: center;
-    color: #f4f7ff;
+    color: #52cbf7;
     margin-top: 60px;
 }
 .about-bio{
+    display: flex;
     width: 50%;
     padding-top: 10%;
     color: rgba(255,255,255,.9);
     font-family: 'Poppins' , sans-serif;
+    flex-direction: column;
+}
+.aboutme-btn{
+    margin-top: 40px;
+}
+.aboutme-btn a{
+    padding: 10px 70px;
+    font-size: 20px;
+    color: #000;
+    border: 1px solid #000;
+    border-radius: 10px;
+    background-color: #52cbf7;
+}
+.aboutme-btn a:hover{
+    background-color: #1c9bc9;
+    color : #000;
+    transition: all 0.8s ease;
 }
 @media (max-width : 775px) {
     #aboutme{
