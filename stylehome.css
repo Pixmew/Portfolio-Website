@@ -8,20 +8,18 @@ a{
     text-decoration: none;
 }
 
+
 /*Home Page Styling*/
 #main{
     width: 100%;
     height: 100vh;
     box-sizing: border-box;
-    background: linear-gradient(to top left , rgba(3, 132, 252) , rgba(194, 226, 255));
-    /* background : #edf1fd; */
-    /* background-image: url(Images/back.jpg);
+    background : #fff;
+    background-image: url(Images/back2.jpg);
     background-repeat: no-repeat;
     background-size: cover;
-    back */
     position: relative;
 }
-
 /*Navigation Bar Styling*/
 .navbar{
     display: flex;
@@ -38,11 +36,16 @@ a{
     box-shadow: 2px 2px 12px rgba(0, 0, 0, 0.1);
     z-index: 1;
     padding: 10px;
-    background-color: #f9f9ff;
 }
+/*navigation bar logo styling*/
 .navbar .logo{
     padding-left: 5vw;
 }
+.navbar .logo a{
+    color: #fff;
+    font-size: 20px;
+}
+/*navigation bar n=menu styling*/
 .navbar .menu{
     margin-right: 5vw;
 }
@@ -50,22 +53,33 @@ a{
     display: inline-flex;
 }
 .navbar .menu li a{
-    padding: 10px 1.5vw;
-    color: #6c707c;
-    font-size: 15px;
-}
-.navbar .menu li a:hover{
-    background-color: #000;
+    position: relative;
+    padding: 20px 1.5vw;
     color: #fff;
-    transition: all 0.5s ease;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 300;
+}
+.navbar .menu li a::before{
+    content : "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 0;
+    left:0;
+    background-color: #fff;
+    visibility: hidden;
+    transform: scaleX(0);
+    transition: all 0.3s ease-in-out;
+}
+.navbar .menu li a:hover::before{
+    visibility: visible;
+    transform: scaleX(1);
 }
 .menu-btn {
-    color: #000;
-    font-size: 25px;
+    font-size: 20px;
     display: none;
 }
-@media (max-width : 725px) {
+@media (max-width : 831px) {
     .navbar .menu{
         position: fixed;
         background: #000;
@@ -89,58 +103,52 @@ a{
     .navbar .menu li a{
         color: #fff;
         font-size: 25px;
+        font-weight: 500;
     }
     .navbar .menu-btn{
         display: block;
         padding: 20px 20px;
         z-index: 1;
-        color: #000;
+        color: #fff;
     }
     .navbar .menu-btn.active{
         color: #fff;
         transition: all 0.5s ease;
     }
 }
-
 /**home page content Styling*/
 .home-content{
     position: absolute;
     font-family: 'Poppins' ,sans-serif;
-    width : 500px;
-    top: 40%;
+    width : auto;
+    top: 40vh;
     left: 10%;
     letter-spacing: 1px;
 }
 .home-content h1{
-    letter-spacing: 3px;
+    letter-spacing: 1vw;
     font-size: 40px;
-    color: #292929;
+    font-weight: 300;
+    color: #fff;
 }
-.home-content p:nth-child(3){
-    font-weight: 500;
-}
-.home-content p span{
-    font-size: 25px;
-    padding-left: 10px;
-}
-.home-content p span ,.home-content h1 span{
-    color: #e8a13f;
+.home-content p{
+    color: #fff;
 }
 .home-content .cv-btn{
     display: flex;
     width: 200px;
     height: 45;
-    background-color: #292929;
+    border: 2px solid #fff;
+    border-radius: 5px;
     color: #fff;
     justify-content: center;
     align-items: center;
     padding: 10px;
 }
 .home-content .cv-btn:hover{
-    background-color: #131313;
-}
-.home-img{
-    margin-left: 60%;
+    background-color: #fff;
+    color: #000;
+    transition: all 0.5s ease;
 }
 /*social buttons styling*/
 .social{
@@ -149,49 +157,60 @@ a{
     left: 50px;
     bottom : 50px;
 }
-.social a{
-    margin: 6px 12px;
-}
 .social i{
-    color: rgba(18,17,17,0.4);
-    font-size: 20px;
+    color: #fff;
+    padding : 25px;
+    font-size: 25px;
 }
 .social a:hover i{
     color: #17d1ac;
     transition: all 0.5s ease;
 }
-
-
-
-/*About me section styling*/
-#aboutme{
-    width: 100%;
-    height: 100vh;
-    box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    padding: 100px 15%;
-    background-color: #fff;
+@media (max-width : 379px) {
+    .social i{
+        padding: 20px;
+    }
+    .social{
+        bottom : 10px;
+    }
 }
-.about-bio .bio-info{
-    margin-top: 50px;
-    box-sizing: border-box;
-    display: block;
+@media (max-height : 599px) {
+  .home-content{
+      top : 30vh;
+  }
 }
-.about-image img{
-    object-fit: cover;
-    padding-right: 50px;
+@media (max-height : 512px) {
+  .home-content{
+      top : 20vh;
+  }
 }
-.about-bio .bio,
-.bio-info .info,
-.bio-info .info-title{
-    font-family: 'Poppins' ,sans-serif;
+@media (max-height : 407px) {
+  .home-content{
+      top : 20vh;
+  }
+  .social{
+      left: 15px;
+      bottom : 10px;
+  }
+  .social i{
+      padding : 20px;
+      font-size: 20px;
+  }
 }
-.bio,
-.about-bio .bio-info .info,
-.about-bio .bio-info .info-title{
-      color: rgba(0,0,0,0.7);
-}
-@media (max-width :) {
-
+@media (max-height : 380px) {
+  .home-content h1{
+      letter-spacing: 1vw;
+      font-size: 30px;
+  }
+  .home-content .cv-btn{
+      padding: 7px;
+  }
+  .social{
+      left: 20px;
+      bottom : 10px;
+  }
+  .social i{
+      padding : 20px;
+      font-size: 15px;
+  }
 }
