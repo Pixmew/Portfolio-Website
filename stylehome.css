@@ -9,12 +9,12 @@ a{
 }
 
 
-/*Home Page Styling*/
+/*Home section Styling*/
 #main{
     width: 100%;
     height: 100vh;
     box-sizing: border-box;
-    background : #fff;
+    /* background : #fff; */
     background-image: url(Images/back2.jpg);
     background-repeat: no-repeat;
     background-size: cover;
@@ -174,30 +174,34 @@ a{
         bottom : 10px;
     }
 }
-@media (max-height : 599px) {
+@media (max-width : 307px) {
+  .social i{
+      padding: 15px;
+  }
+  .social{
+      bottom : 7px;
+      left: 20px;
+  }
+}
+@media (max-height : 731px) {
   .home-content{
       top : 30vh;
   }
 }
-@media (max-height : 512px) {
+@media (max-height : 600px) {
   .home-content{
       top : 20vh;
   }
 }
-@media (max-height : 407px) {
+@media (max-height : 513px) {
   .home-content{
-      top : 20vh;
-  }
-  .social{
-      left: 15px;
-      bottom : 10px;
+      top : 15vh;
   }
   .social i{
-      padding : 20px;
-      font-size: 20px;
+      padding : 15px;
   }
 }
-@media (max-height : 380px) {
+@media (max-height : 447px) {
   .home-content h1{
       letter-spacing: 1vw;
       font-size: 30px;
@@ -211,6 +215,6 @@ a{
   }
   .social i{
       padding : 20px;
-      font-size: 15px;
+      font-size: 20px;
   }
 }
