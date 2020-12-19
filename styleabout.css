@@ -47,4 +47,13 @@ a{
 .about-page-content .about-bio .about-text{
     display: block;
     font-family: 'Poppins', sans-serif;
+    opacity: 0.8;
+}
+.about-page-content .about-bio .about-info{
+    display: grid;
+}
+.about-page-content .about-bio .about-info i{
+    font-family: 'Ubuntu' , sans-serif;
+    opacity: 0.8;
+    font-weight: 400;
 }
