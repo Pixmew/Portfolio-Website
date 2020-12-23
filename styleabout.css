@@ -12,7 +12,7 @@ a{
 /*About me section styling*/
 #aboutme{
     width: 100%;
-    height: 100vh;
+    height: 100%;
     bottom: 0;
     box-sizing: border-box;
     display: flex;
@@ -21,9 +21,20 @@ a{
     background-color: #fff;
 }
 .about-page-title{
+    position: relative;
     padding: 50px 0;
     font-family: 'Ubuntu', sans-serif;
     font-size: 25px;
+}
+.about-page-title span::before{
+    content : "";
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    bottom: 30px;
+    left:0;
+    background-color: #000;
+    transform: scaleX(1);
 }
 .about-page-content{
     display: flex;
@@ -41,7 +52,7 @@ a{
 }
 .about-page-content .about-bio .about-title{
     padding-bottom: 30px;
-    font-size: 40px;
+    font-size: 30px;
     font-family: 'Poppins', sans-serif;
 }
 .about-page-content .about-bio .about-text{
@@ -49,11 +60,47 @@ a{
     font-family: 'Poppins', sans-serif;
     opacity: 0.8;
 }
-.about-page-content .about-bio .about-info{
-    display: grid;
+.about-page-content .about-bio .about-btn{
+    padding-top: 50px;
 }
-.about-page-content .about-bio .about-info i{
+.about-page-content .about-bio .about-btn a{
+    padding: 20px 60px;
+    color: #fff;
+    background-color: #000;
     font-family: 'Ubuntu' , sans-serif;
-    opacity: 0.8;
-    font-weight: 400;
+}
+
+@media (max-width : 943px){
+    .about-page-content{
+        flex-direction: column;
+    }
+    .about-page-content .about-bio{
+        max-width: 70vw;
+        text-align: center;
+        padding-top: 30px;
+    }
+}
+@media (max-width : 535px) {
+    .about-page-content .about-image img{
+        height: 70vw;
+    }
+    .about-page-content .about-bio{
+        max-width: 100vw;
+    }
+    .about-page-content .about-bio .about-title{
+        font-size: 6vw;
+    }
+    .about-page-content .about-bio .about-text{
+        font-size: 3vw;
+    }
+    .about-page-content .about-bio .about-btn{
+        padding-top: 10vw;
+    }
+    .about-page-content .about-bio .about-btn a{
+        font-size: 3vw;
+        padding: 4vw 12vw;
+    }
+    .about-page-title{
+        font-size: 6vw;
+    }
 }
