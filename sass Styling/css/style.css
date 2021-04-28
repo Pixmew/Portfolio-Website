@@ -1,0 +1,49 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,600;1,400&family=Ubuntu:ital,wght@0,400;0,700;1,400&display=swap");
+* {
+  list-style-type: none;
+}
+
+body {
+  font-size: 20px;
+  font-family: 'Poppins', sans-serif;
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+#Home {
+  width: 100%;
+  height: 100vh;
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  position: relative;
+}
+
+.NavigationBar {
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.NavigationBar .menuElements ul li {
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  padding-left: 2vw;
+}
+
+.NavigationBar .menuElements ul li a {
+  color: #003366;
+}
+/*# sourceMappingURL=style.css.map */
