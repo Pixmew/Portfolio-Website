@@ -65,4 +65,11 @@ a {
 .NavigationBar .menuElements ul li a {
   color: #003366;
 }
+
+.NavigationBar .menuElements li a:hover {
+  background-color: #292929;
+  -webkit-transition: all ease 0.4s;
+  transition: all ease 0.4s;
+  color: white;
+}
 /*# sourceMappingURL=style.css.map */

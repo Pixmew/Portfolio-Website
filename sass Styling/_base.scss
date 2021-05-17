@@ -56,3 +56,8 @@ a{
 .NavigationBar .menuElements ul li a{
     color: $menuElementsColor;
 }
+.NavigationBar .menuElements li a:hover{
+    background-color: #292929;
+    transition: all ease 0.4s;
+    color: white;
+}
