@@ -4,7 +4,6 @@
 }
 
 body {
-  font-size: 20px;
   font-family: 'Poppins', sans-serif;
   list-style-type: none;
   background-color: #161616;
@@ -44,32 +43,83 @@ a {
   -webkit-box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
           box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
   letter-spacing: 2px;
-  text-transform: uppercase;
   font-weight: 400;
   background-color: #ebfffe;
-  padding: 10px 10vw;
+  padding: 5px 10vw;
   z-index: 1;
 }
 
-.NavigationBar .logoInNavigation div {
-  font-family: 'Ubuntu' , sans-serif;
+.NavigationBar .logoInNavigation a {
+  color: #292929;
+  font-weight: 700;
+  font-size: 25px;
+  font-family: 'Ubuntu',sans-serif;
 }
 
 .NavigationBar .menuElements ul li {
   display: -webkit-inline-box;
   display: -ms-inline-flexbox;
   display: inline-flex;
-  padding-left: 2vw;
+  padding-left: 1vw;
 }
 
 .NavigationBar .menuElements ul li a {
-  color: #003366;
+  color: #161616;
+  padding: 7px 1vw;
+  border-radius: 2px;
 }
 
 .NavigationBar .menuElements li a:hover {
-  background-color: #292929;
+  background-color: #ffd240;
   -webkit-transition: all ease 0.4s;
   transition: all ease 0.4s;
-  color: white;
+  color: #ebfffe;
+}
+
+.NavigationBar .menu-btn {
+  font-size: 20px;
+  display: none;
+}
+
+.Homepage .IntroSection {
+  position: absolute;
+  top: 30vh;
+  left: 10%;
+  width: auto;
+  letter-spacing: 1px;
+}
+
+.Homepage .IntroSection .greeting,
+.Homepage .IntroSection .profession {
+  font-size: 2vh;
+}
+
+.Homepage .IntroSection .name {
+  font-size: 3vh;
+  font-weight: bold;
+  letter-spacing: 0.5vw;
+}
+
+.Homepage .IntroSection .name span {
+  background-color: #ffd240;
+  color: #ebfffe;
+  padding: 10px;
+  border-radius: 2px;
+}
+
+.Homepage .IntroSection a {
+  border: solid 1px #161616;
+  color: #ebfffe;
+  font-size: 20px;
+  padding: 20px;
+  background-color: #292929;
+}
+
+.Homepage .IntroSection a:hover {
+  background-color: #ffd240;
+  color: #ebfffe;
+  border-color: #ebfffe;
+  -webkit-transition: all ease 0.5s;
+  transition: all ease 0.5s;
 }
 /*# sourceMappingURL=style.css.map */
