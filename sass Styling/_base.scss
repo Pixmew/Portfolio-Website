@@ -89,9 +89,6 @@ a{
     font-weight: bold;
     letter-spacing: 0.5vw;
 }
-.Homepage .IntroSection .profession{
-    
-}
 .Homepage .IntroSection .name span{
     background-color: $Orange;
     color: $HomeBackgroundColor;
@@ -110,4 +107,17 @@ a{
     color: $HomeBackgroundColor;
     border-color: $HomeBackgroundColor;
     transition: all ease 0.5s;
+}
+
+@media(max-width : 993px){
+    .NavigationBar .menu-btn{
+        color: $offBlack;
+        font-size: 25px;
+        display: block;
+        transition: all ease 0.5f;
+        padding :1.7vw;
+    }
+    .NavigationBar .menuElements{
+        display: none;
+    }
 }

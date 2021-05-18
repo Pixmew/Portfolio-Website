@@ -122,4 +122,18 @@ a {
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
 }
+
+@media (max-width: 993px) {
+  .NavigationBar .menu-btn {
+    color: #292929;
+    font-size: 25px;
+    display: block;
+    -webkit-transition: all ease 0.5f;
+    transition: all ease 0.5f;
+    padding: 1.7vw;
+  }
+  .NavigationBar .menuElements {
+    display: none;
+  }
+}
 /*# sourceMappingURL=style.css.map */
