@@ -107,20 +107,33 @@ a {
   border-radius: 2px;
 }
 
-.Homepage .IntroSection a {
+.Homepage .IntroSection .CV-btn {
+  margin-top: 10vh;
+}
+
+.Homepage .IntroSection .CV-btn a {
   border: solid 1px #161616;
   color: #ebfffe;
-  font-size: 20px;
+  font-size: 2vh;
   padding: 10px 15px;
   background-color: #292929;
 }
 
-.Homepage .IntroSection a:hover {
+.Homepage .IntroSection .CV-btn a:hover {
   background-color: #ffd240;
   color: #ebfffe;
   border-color: #ebfffe;
   -webkit-transition: all ease 0.5s;
   transition: all ease 0.5s;
+}
+
+.Homepage .IntroSection .sociallinks i {
+  font-size: 5vh;
+  padding: 2%;
+}
+
+.Homepage .IntroSection .sociallinks a {
+  color: #292929;
 }
 
 @media (max-width: 993px) {

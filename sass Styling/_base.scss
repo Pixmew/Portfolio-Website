@@ -95,18 +95,28 @@ a{
     padding: 10px;
     border-radius: 2px;
 }
-.Homepage .IntroSection a{
+.Homepage .IntroSection .CV-btn{
+    margin-top: 10vh;
+}
+.Homepage .IntroSection .CV-btn a{
     border :solid 1px $backgroundColor;
     color: $HomeBackgroundColor;
-    font-size: 20px;
+    font-size: 2vh;
     padding: 10px 15px;
     background-color: $offBlack;
 }
-.Homepage .IntroSection a:hover{
+.Homepage .IntroSection .CV-btn a:hover{
     background-color: $Orange;
     color: $HomeBackgroundColor;
     border-color: $HomeBackgroundColor;
     transition: all ease 0.5s;
+}
+.Homepage .IntroSection .sociallinks i{
+    font-size: 5vh;
+    padding: 2%;
+}
+.Homepage .IntroSection .sociallinks a{
+    color: $offBlack;
 }
 
 @media(max-width : 993px){
