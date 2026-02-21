@@ -42,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
         ship.add(wing);
 
         // Cockpit
-        const cockpitGeo = new THREE.CapsuleGeometry(0.4, 1.2, 4, 8);
+        const cockpitGeo = new THREE.CylinderGeometry(0.4, 0.4, 1.2, 8);
         cockpitGeo.rotateX(Math.PI / 2);
         const cockpitMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00ffcc, emissiveIntensity: 0.6, transparent: true, opacity: 0.9 });
         const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
