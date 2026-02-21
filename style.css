@@ -716,6 +716,30 @@ body {
     border-top: 1px solid var(--border-subtle);
 }
 
+/* ── COIN UI ═══════════════════════════════════════════════════════════════ */
+#coin-ui {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    font-family: var(--font-h);
+    font-size: 24px;
+    font-weight: 900;
+    color: #ffd700;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    z-index: 1000;
+    pointer-events: none;
+    background: var(--bg-panel);
+    padding: 12px 24px;
+    border-radius: var(--radius);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+    backdrop-filter: blur(12px);
+    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+#coin-ui.bump {
+    transform: scale(1.15);
+}
+
 /* ── REVEAL ANIMATIONS ───────────────────────────────────────────────────────── */
 .reveal-item {
     opacity: 0;

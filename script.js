@@ -92,6 +92,46 @@ document.addEventListener('DOMContentLoaded', () => {
         eyeR.position.set(0.5, 1.5, 1.3);
         slimeGroup.add(eyeL, eyeR);
 
+        // -- AI Companion Slime (Female with Bow) --
+        const aiGroup = new THREE.Group();
+        scene.add(aiGroup);
+
+        // Offset starting position
+        aiGroup.position.set(10, 0, -10);
+
+        let aiColor = new THREE.Color(0xff00ff);
+        const aiMat = new THREE.MeshToonMaterial({
+            color: aiColor,
+            gradientMap: gradientMap
+        });
+        const aiMesh = new THREE.Mesh(slimeGeo, aiMat);
+        aiMesh.position.y = 1.2;
+        aiMesh.castShadow = true;
+        aiMesh.receiveShadow = true;
+        aiGroup.add(aiMesh);
+
+        // AI Eyes
+        const aiEyeL = new THREE.Mesh(eyeGeo, eyeMat);
+        aiEyeL.position.set(-0.5, 1.5, 1.3);
+        const aiEyeR = new THREE.Mesh(eyeGeo, eyeMat);
+        aiEyeR.position.set(0.5, 1.5, 1.3);
+        aiGroup.add(aiEyeL, aiEyeR);
+
+        // Bow Accessory
+        const bowGeo = new THREE.TorusGeometry(0.4, 0.15, 8, 16);
+        bowGeo.scale(1, 0.5, 1);
+        const bowMat = new THREE.MeshToonMaterial({ color: 0xff0055, gradientMap: gradientMap });
+        const bowL = new THREE.Mesh(bowGeo, bowMat);
+        bowL.position.set(-0.4, 2.2, 0);
+        bowL.rotation.z = Math.PI / 4;
+        const bowR = new THREE.Mesh(bowGeo, bowMat);
+        bowR.position.set(0.4, 2.2, 0);
+        bowR.rotation.z = -Math.PI / 4;
+        const bowCenterGeo = new THREE.SphereGeometry(0.2, 16, 16);
+        const bowCenter = new THREE.Mesh(bowCenterGeo, bowMat);
+        bowCenter.position.set(0, 2.2, 0);
+        aiGroup.add(bowL, bowR, bowCenter);
+
         // Forest Background Environment
         const envGroup = new THREE.Group();
         scene.add(envGroup);
@@ -144,17 +184,43 @@ document.addEventListener('DOMContentLoaded', () => {
         // Splats Array
         const splats = [];
 
-        // Interaction State
+        // Coins Array
+        const coins = [];
+        const coinGeo = new THREE.CylinderGeometry(0.8, 0.8, 0.2, 16);
+        coinGeo.rotateX(Math.PI / 2); // Stand up
+        const coinMat = new THREE.MeshToonMaterial({ color: 0xffd700, emissive: 0xffaa00, emissiveIntensity: 0.2, gradientMap: gradientMap });
+
+        let coinCount = 0;
+        const coinUi = document.getElementById('coin-ui');
+        function collectCoin() {
+            coinCount++;
+            if (coinUi) {
+                coinUi.innerText = '🪙 ' + coinCount;
+                coinUi.classList.add('bump');
+                setTimeout(() => coinUi.classList.remove('bump'), 100);
+            }
+        }
+
+        // Player Interaction State
         const mouse = new THREE.Vector2(0, 0);
         const raycaster = new THREE.Raycaster();
         const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
         const targetPos = new THREE.Vector3(0, 0, 0);
 
+        // Player Jump
         let isJumping = false;
         let jumpTime = 0;
         const jumpDuration = 0.6;
         let jumpStart = new THREE.Vector3();
         let jumpEnd = new THREE.Vector3();
+
+        // AI Jump & State
+        let aiIsJumping = false;
+        let aiJumpTime = 0;
+        let aiJumpStart = new THREE.Vector3();
+        let aiJumpEnd = new THREE.Vector3();
+        let aiTargetPos = new THREE.Vector3(10, 0, -10);
+        let aiWanderTimer = 0;
 
         const colors = ['#00ffcc', '#ff00ff', '#ffeb3b', '#ff5722', '#00e5ff', '#b2ff59'];
 
@@ -218,11 +284,140 @@ document.addEventListener('DOMContentLoaded', () => {
         let velocity = new THREE.Vector3();
         let lastPos = new THREE.Vector3();
 
+        let aiVelocity = new THREE.Vector3();
+        let aiLastPos = new THREE.Vector3();
+
+        let coinSpawnTimer = 0;
+
         function animate() {
             requestAnimationFrame(animate);
             const dt = Math.min(clock.getDelta(), 0.1);
             const t = clock.getElapsedTime();
 
+            // -- COIN SPAWNING --
+            coinSpawnTimer -= dt;
+            if (coinSpawnTimer <= 0 && coins.length < 5) {
+                // Spawn a coin every 3-5 seconds, max 5 at a time
+                coinSpawnTimer = 3 + Math.random() * 2;
+                const coin = new THREE.Mesh(coinGeo, coinMat);
+                // Spawn randomly within a radius
+                const angle = Math.random() * Math.PI * 2;
+                const radius = 10 + Math.random() * 20;
+                coin.position.set(Math.cos(angle) * radius, 1, Math.sin(angle) * radius);
+
+                // Add a glowing halo
+                const glowGeo = new THREE.CircleGeometry(1.5, 16);
+                const glowMat = new THREE.MeshBasicMaterial({ color: 0xffd700, transparent: true, opacity: 0.3, depthWrite: false });
+                const glow = new THREE.Mesh(glowGeo, glowMat);
+                glow.rotation.x = -Math.PI / 2;
+                glow.position.y = -0.9;
+                coin.add(glow);
+
+                scene.add(coin);
+                coins.push(coin);
+            }
+
+            // Update Coins & Collisions
+            for (let i = coins.length - 1; i >= 0; i--) {
+                const c = coins[i];
+                // Spin coin
+                c.rotation.y += 3 * dt;
+                // Bob coin
+                c.position.y = 1 + Math.sin(t * 5 + i) * 0.3;
+
+                // Check collision with Player Slime
+                if (c.position.distanceTo(slimeGroup.position) < 3.0) {
+                    collectCoin();
+                    scene.remove(c);
+                    c.geometry.dispose();
+                    coins.splice(i, 1);
+                }
+            }
+
+            // -- AI COMPANION LOGIC --
+            aiWanderTimer -= dt;
+            if (aiWanderTimer <= 0 && !aiIsJumping) {
+                // Pick a new random spot to wander to
+                const angle = Math.random() * Math.PI * 2;
+                const radius = Math.random() * 15;
+                // Stick relatively close to the player
+                aiTargetPos.x = slimeGroup.position.x + Math.cos(angle) * radius;
+                aiTargetPos.z = slimeGroup.position.z + Math.sin(angle) * radius;
+
+                // 30% chance to jump instead of sliding
+                if (Math.random() < 0.3) {
+                    aiIsJumping = true;
+                    aiJumpTime = 0;
+                    aiJumpStart.copy(aiGroup.position);
+                    aiJumpEnd.copy(aiTargetPos);
+                }
+
+                aiWanderTimer = 2 + Math.random() * 3; // Wait 2-5s before moving again
+            }
+
+            if (aiIsJumping) {
+                aiJumpTime += dt;
+                const progress = Math.min(aiJumpTime / jumpDuration, 1.0);
+
+                const ease = 1 - Math.pow(1 - progress, 3);
+                aiGroup.position.lerpVectors(aiJumpStart, aiJumpEnd, ease);
+
+                const height = Math.sin(progress * Math.PI) * 8;
+                aiGroup.position.y = height;
+
+                if (progress < 0.5) {
+                    aiMesh.scale.set(0.8, 1.4, 0.8);
+                } else {
+                    aiMesh.scale.set(0.9, 1.2, 0.9);
+                }
+
+                if (progress >= 1.0) {
+                    aiIsJumping = false;
+                    aiGroup.position.copy(aiJumpEnd);
+                    aiGroup.position.y = 0;
+
+                    aiMesh.scale.set(1.5, 0.5, 1.5);
+
+                    const newColorStr = colors[Math.floor(Math.random() * colors.length)];
+                    aiColor.set(newColorStr);
+                    aiMat.color = aiColor;
+
+                    spawnSplat(aiGroup.position, aiColor);
+                }
+            } else {
+                // Spring following for AI
+                aiGroup.position.lerp(aiTargetPos, 3 * dt); // Slower than player
+                aiGroup.position.y = 0;
+
+                aiMesh.scale.x = THREE.MathUtils.lerp(aiMesh.scale.x, 1, 10 * dt);
+                aiMesh.scale.y = THREE.MathUtils.lerp(aiMesh.scale.y, 1, 10 * dt);
+                aiMesh.scale.z = THREE.MathUtils.lerp(aiMesh.scale.z, 1, 10 * dt);
+
+                aiVelocity.subVectors(aiGroup.position, aiLastPos).divideScalar(dt);
+                const aiSpeed = aiVelocity.length();
+
+                if (aiSpeed > 2) {
+                    aiMesh.scale.y = Math.max(0.7, 1 - aiSpeed * 0.01);
+                    aiMesh.scale.x = Math.min(1.2, 1 + aiSpeed * 0.005);
+                    aiMesh.scale.z = Math.min(1.2, 1 + aiSpeed * 0.005);
+
+                    if (aiVelocity.lengthSq() > 0.1) {
+                        aiGroup.rotation.y = Math.atan2(aiVelocity.x, aiVelocity.z);
+                    }
+                } else {
+                    aiMesh.position.y = 1.2 + Math.sin(t * 5 + 1) * 0.1;
+                    aiMesh.scale.y = 1 + Math.sin(t * 10 + 1) * 0.05;
+                    aiMesh.scale.x = 1 - Math.sin(t * 10 + 1) * 0.025;
+                    aiMesh.scale.z = 1 - Math.sin(t * 10 + 1) * 0.025;
+                }
+            }
+
+            aiEyeL.position.set(-0.5, 1.1, 1.3);
+            aiEyeR.position.set(0.5, 1.1, 1.3);
+            aiLastPos.copy(aiGroup.position);
+
+
+            // -- PLAYER SLIME LOGIC --
             if (isJumping) {
                 jumpTime += dt;
                 const progress = Math.min(jumpTime / jumpDuration, 1.0);
