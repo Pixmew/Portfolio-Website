@@ -5,101 +5,317 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Yash Shete | Game Developer</title>
-    <meta name="description" content="Portfolio of Yash Shete, Game Developer — Developer by Brain, Gamer by Heart. Navigate a 3D world to explore my work.">
+    <meta name="description"
+        content="Portfolio of Yash Shete — Game Developer. 3+ years building Unity games. C#, C++, Blender, Unreal Engine.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Orbitron:wght@500;700;900&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-
-    <!-- Three.js import map -->
     <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js",
-            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.165.0/examples/jsm/"
-        }
-    }
+    { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.165.0/build/three.module.js" } }
     </script>
 </head>
 
 <body>
 
-    <!-- 3D Game Canvas -->
-    <canvas id="game-canvas"></canvas>
-
-    <!-- ===== HUD ===== -->
-    <div id="hud">
-
-        <!-- Minimap -->
-        <div id="minimap-wrapper">
-            <canvas id="minimap"></canvas>
-            <div id="minimap-label">MAP</div>
+    <!-- ══ STICKY NAV ══════════════════════════════════════════════════════════ -->
+    <nav class="site-nav" id="site-nav">
+        <div class="nav-inner">
+            <span class="nav-logo">YS.</span>
+            <ul class="nav-links">
+                <li><a href="#about">About</a></li>
+                <li><a href="#projects">Projects</a></li>
+                <li><a href="#skills">Skills</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="Yash Shete.pdf" download class="nav-cta">Download CV</a>
         </div>
+    </nav>
 
-        <!-- Top center: zone label -->
-        <div id="zone-label" class="hidden"></div>
+    <!-- ══ HERO — 3D world as background ══════════════════════════════════════ -->
+    <section class="hero" id="home">
+        <canvas id="game-canvas"></canvas>
 
-        <!-- Interact prompt -->
-        <div id="interact-prompt" class="hidden">Press <kbd>E</kbd> to Enter</div>
-
-        <!-- Player tag -->
-        <div id="player-tag">
-            <span class="p1-badge">PLAYER 1</span>
-            <span class="p1-name">YASH SHETE</span>
-        </div>
-
-        <!-- Controls tip bottom left -->
-        <div id="controls-tip">
-            <span>WASD / <kbd>↑↓←→</kbd> Move &nbsp;|&nbsp; <kbd>E</kbd> Interact &nbsp;|&nbsp; <kbd>ESC</kbd> Close</span>
-        </div>
-
-        <!-- Virtual joystick (mobile) -->
-        <div id="virtual-joystick">
-            <div class="vj-row">
-                <button class="vj-btn" id="vj-up">▲</button>
+        <!-- Floating overlay text on top of 3D world -->
+        <div class="hero-overlay">
+            <p class="hero-status">🟢 OPEN TO WORK</p>
+            <h1 class="hero-name">Yash Shete</h1>
+            <h2 class="hero-role">Game Developer</h2>
+            <p class="hero-sub">Developer by Brain, Gamer by Heart</p>
+            <div class="hero-btns">
+                <a href="#projects" class="btn btn-primary">View My Work</a>
+                <a href="#contact" class="btn btn-outline">Get In Touch</a>
             </div>
-            <div class="vj-row">
-                <button class="vj-btn" id="vj-left">◀</button>
-                <button class="vj-btn vj-center" id="vj-interact">E</button>
-                <button class="vj-btn" id="vj-right">▶</button>
-            </div>
-            <div class="vj-row">
-                <button class="vj-btn" id="vj-down">▼</button>
+            <div class="hero-badges">
+                <span class="badge">Unity 3D</span>
+                <span class="badge">C# / C++</span>
+                <span class="badge">Unreal Engine</span>
+                <span class="badge">Blender</span>
             </div>
         </div>
-    </div>
 
-    <!-- ===== Controls Overlay (shown on load) ===== -->
-    <div id="controls-overlay">
-        <div class="co-box">
-            <div class="co-title">
-                <span class="glitch-text" data-text="WELCOME">WELCOME</span>
-            </div>
-            <p class="co-sub">Developer by Brain, Gamer by Heart</p>
-            <div class="co-divider"></div>
-            <div class="co-controls">
-                <div class="co-row"><kbd>W A S D</kbd> <span>Move</span></div>
-                <div class="co-row"><kbd>↑ ↓ ← →</kbd> <span>Move</span></div>
-                <div class="co-row"><kbd>E</kbd> <span>Enter Zone</span></div>
-                <div class="co-row"><kbd>ESC</kbd> <span>Close Panel</span></div>
-            </div>
-            <p class="co-hint">Walk to a glowing zone and press <strong>E</strong> to explore</p>
-            <button id="dismiss-controls" class="btn primary">START GAME →</button>
+        <!-- Scroll cue -->
+        <div class="scroll-cue">
+            <span>Scroll to explore</span>
+            <div class="scroll-arrow">↓</div>
         </div>
-    </div>
+    </section>
 
-    <!-- ===== Overlay Panel ===== -->
-    <div id="overlay-panel" class="hidden">
-        <div class="panel-inner">
-            <div class="panel-header">
-                <h2 id="panel-title"></h2>
-                <button id="panel-close">✕</button>
+    <!-- ══ ABOUT ══════════════════════════════════════════════════════════════ -->
+    <section class="section about-section" id="about">
+        <div class="container">
+            <p class="section-tag">WHO I AM</p>
+            <h2 class="section-heading">About Me</h2>
+
+            <div class="about-grid">
+                <div class="about-text">
+                    <p>As a game developer with <strong>3+ years of focused industry experience</strong> and a solid
+                        Computer Science education, I am highly skilled in programming and designing interactive
+                        experiences.</p>
+                    <p>My professional toolkit — <strong>C#, C++, Unity, and Blender</strong> — is backed by strong
+                        interpersonal skills and a genuine passion for creating games that people love to play.</p>
+                    <div class="about-facts">
+                        <div class="fact"><span class="fact-num">3+</span><span class="fact-label">Years
+                                Experience</span></div>
+                        <div class="fact"><span class="fact-num">8+</span><span class="fact-label">Shipped Games</span>
+                        </div>
+                        <div class="fact"><span class="fact-num">∞</span><span class="fact-label">Passion for
+                                Games</span></div>
+                    </div>
+                </div>
+                <div class="about-card-wrap">
+                    <div class="about-card">
+                        <div class="ac-icon">🎮</div>
+                        <h3>Game Developer</h3>
+                        <p>Specialising in Unity and Unreal Engine — from hyper-casual to simulation to action.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="ac-icon">🛠️</div>
+                        <h3>Technical Artist</h3>
+                        <p>3D modelling, animation, and HLSL shaders in Blender and Unreal pipelines.</p>
+                    </div>
+                    <div class="about-card">
+                        <div class="ac-icon">🤖</div>
+                        <h3>AI-Augmented Dev</h3>
+                        <p>Integrating AI workflows to ship faster and prototype smarter.</p>
+                    </div>
+                </div>
             </div>
-            <div id="panel-body"></div>
         </div>
-    </div>
+    </section>
 
-    <!-- Main script (ES module) -->
+    <!-- ══ PROJECTS ═══════════════════════════════════════════════════════════ -->
+    <section class="section projects-section" id="projects">
+        <div class="container">
+            <p class="section-tag">WHAT I'VE BUILT</p>
+            <h2 class="section-heading">Featured Projects</h2>
+            <p class="section-sub">Hover a card to watch the trailer. Click to learn more.</p>
+
+            <div class="projects-grid">
+
+                <div class="project-card" data-vid="zb9QKkiSRX8">
+                    <div class="card-media">
+                        <div class="card-thumb c1"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Simulation</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Laundry Restock DIY</h3>
+                        <p>Relaxing simulation — organise a laundry room, sort, fill and restock with satisfying ASMR
+                            feedback.</p>
+                        <div class="card-chips"><span>Unity</span><span>C#</span><span>Simulation</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="TbkW4vawJFk">
+                    <div class="card-media">
+                        <div class="card-thumb c2"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Puzzle</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Burger Chef</h3>
+                        <p>Stack the right ingredients, unlock toppings and cook the perfect burger.</p>
+                        <div class="card-chips"><span>Unity</span><span>C#</span><span>Simulation</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="EBxXDO2tP9I">
+                    <div class="card-media">
+                        <div class="card-thumb c3"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Adventure</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Myth Monster Hunter</h3>
+                        <p>Immersive ocean adventure — cast lines, catch fish and mythical creatures with custom rod
+                            physics.</p>
+                        <div class="card-chips"><span>Unity</span><span>C#</span><span>Adventure</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="DclRxS_hcMc">
+                    <div class="card-media">
+                        <div class="card-thumb c4"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Hyper Casual</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Drag and Merge</h3>
+                        <p>Untangle tangled lovers — click, drag and solve every puzzle to reunite them.</p>
+                        <div class="card-chips"><span>Hyper Casual</span><span>Puzzle</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="93WNVEmMP9Y">
+                    <div class="card-media">
+                        <div class="card-thumb c5"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Action</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Swipe Attack 3D</h3>
+                        <p>Swap places with enemies to eliminate them — dodge, think fast and survive every level.</p>
+                        <div class="card-chips"><span>Hyper Casual</span><span>3D</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card">
+                    <div class="card-media">
+                        <div class="card-thumb c6"></div>
+                        <div class="card-tag">Tycoon</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Makeup Factory Tycoon</h3>
+                        <p>Build and manage makeup factories — craft arms, set up production lines, advertise and
+                            research upgrades.</p>
+                        <div class="card-chips"><span>Simulation</span><span>Tycoon</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="bRjcQQOWBy4">
+                    <div class="card-media">
+                        <div class="card-thumb c7"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Shooter</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Camo Shooter 3D</h3>
+                        <p>Scan the battlefield, find camouflaged enemies and take them out first.</p>
+                        <div class="card-chips"><span>Hyper Casual</span><span>Shooter</span></div>
+                    </div>
+                </div>
+
+                <div class="project-card" data-vid="t9O8PL6xgPE">
+                    <div class="card-media">
+                        <div class="card-thumb c8"></div>
+                        <div class="card-video-wrap">
+                            <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media"
+                                allowfullscreen></iframe>
+                        </div>
+                        <div class="card-tag">Arcade</div>
+                    </div>
+                    <div class="card-body">
+                        <h3>Army Snake</h3>
+                        <p>Command a snake-formation of soldiers — defeat enemy armies, earn cash and upgrade your unit.
+                        </p>
+                        <div class="card-chips"><span>Action</span><span>Arcade</span></div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ SKILLS ═════════════════════════════════════════════════════════════ -->
+    <section class="section skills-section" id="skills">
+        <div class="container">
+            <p class="section-tag">WHAT I KNOW</p>
+            <h2 class="section-heading">Technical Skills</h2>
+
+            <div class="skills-grid">
+                <div class="skill-group">
+                    <h3>🎮 Engines &amp; Rendering</h3>
+                    <div class="skill-pills">
+                        <span>Unity 3D</span><span>Unreal Engine 5</span><span>Custom Engines</span><span>HLSL /
+                            Post-Processing</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <h3>💻 Languages</h3>
+                    <div class="skill-pills">
+                        <span>C#</span><span>C++</span><span>Python</span><span>AI Dev Workflows</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <h3>🎨 Art &amp; Design</h3>
+                    <div class="skill-pills">
+                        <span>Blender</span><span>Figma</span><span>Adobe Photoshop</span>
+                    </div>
+                </div>
+                <div class="skill-group">
+                    <h3>🔧 Tools &amp; Pipeline</h3>
+                    <div class="skill-pills">
+                        <span>Perforce</span><span>Git</span><span>Jira</span><span>Agile / Scrum</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ══ CONTACT ════════════════════════════════════════════════════════════ -->
+    <section class="section contact-section" id="contact">
+        <div class="container contact-inner">
+            <p class="section-tag">LET'S TALK</p>
+            <h2 class="section-heading">Get In Touch</h2>
+            <p class="contact-lead">Open to full-time roles, contract projects and collaborations worldwide.</p>
+            <div class="contact-links">
+                <a href="mailto:yashshete45@gmail.com" class="clink email">
+                    <span class="clink-icon">✉️</span>
+                    <span class="clink-label">yashshete45@gmail.com</span>
+                </a>
+                <a href="https://www.linkedin.com/in/yash-shete-b36aa1182/" target="_blank" rel="noopener"
+                    class="clink linkedin">
+                    <span class="clink-icon">in</span>
+                    <span class="clink-label">LinkedIn Profile</span>
+                </a>
+                <a href="https://universeyash4.wixsite.com/yashsheteportfolio" target="_blank" rel="noopener"
+                    class="clink portfolio">
+                    <span class="clink-icon">🌐</span>
+                    <span class="clink-label">Full Portfolio Site</span>
+                </a>
+                <a href="Yash Shete.pdf" download class="clink cv">
+                    <span class="clink-icon">📄</span>
+                    <span class="clink-label">Download CV / Resume</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer class="site-footer">
+        <p>© 2024 Yash Shete · Built with Three.js &amp; passion.</p>
+    </footer>
+
     <script type="module" src="script.js"></script>
 </body>
 
