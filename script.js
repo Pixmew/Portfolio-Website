@@ -1,97 +1,100 @@
-// --- Custom Cursor ---
-const cursor = document.getElementById('custom-cursor');
+import * as THREE from 'three';
+import { createWorld, animateWorld } from './game/world.js';
+import { createPlayer, setupInput, updatePlayer, getPlayerPosition } from './game/player.js';
+import { createZones, updateZones } from './game/zones.js';
+import { createHUD, updateHUD } from './game/hud.js';
+import { createPanel, openPanel, isPanelOpen } from './game/panels.js';
 
-document.addEventListener('mousemove', (e) => {
-    if (cursor) {
-        cursor.style.left = e.clientX + 'px';
-        cursor.style.top = e.clientY + 'px';
-    }
-
-    const overlay = document.getElementById('glitch-overlay');
-    const heroTitle = document.querySelector('.glitch');
-    const x = (window.innerWidth / 2 - e.pageX) / 25;
-    const y = (window.innerHeight / 2 - e.pageY) / 25;
-
-    if (overlay) overlay.style.transform = `translate(${x}px, ${y}px)`;
-    if (heroTitle) heroTitle.style.transform = `translate(${x * 0.5}px, ${y * 0.5}px)`;
-});
-
-// --- Game Audio Context (Web Audio API) ---
+// --- Audio (8-bit) ---
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
 function playTone(freq, type, duration, vol) {
     if (audioCtx.state === 'suspended') audioCtx.resume();
-    const oscillator = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    oscillator.type = type;
-    oscillator.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    gainNode.gain.setValueAtTime(vol, audioCtx.currentTime);
-    gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
-    oscillator.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    oscillator.start();
-    oscillator.stop(audioCtx.currentTime + duration);
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(vol, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + duration);
 }
 
-function playHoverSound() { playTone(200, 'square', 0.1, 0.05); }
-function playClickSound() {
+function playFootstep() { playTone(120 + Math.random() * 40, 'square', 0.05, 0.025); }
+function playZoneEnter() {
+    playTone(440, 'sine', 0.15, 0.08);
+    setTimeout(() => playTone(660, 'sine', 0.15, 0.06), 100);
+}
+function playInteract() {
     playTone(600, 'sine', 0.1, 0.1);
-    setTimeout(() => playTone(800, 'square', 0.1, 0.05), 50);
+    setTimeout(() => playTone(800, 'square', 0.1, 0.05), 60);
 }
 
-// --- Hover-to-Play YouTube Video ---
-// YouTube requires ?autoplay=1&mute=1&controls=0&loop=1&playlist=ID
-// We set the src on mouseenter and clear it on mouseleave to force stop
-function buildYTSrc(id) {
-    return `https://www.youtube.com/embed/${id}?autoplay=1&mute=1&controls=0&loop=1&playlist=${id}&modestbranding=1&rel=0`;
-}
-
+// --- Boot ---
 document.addEventListener('DOMContentLoaded', () => {
+    const { renderer, scene, camera, walls, particles, lights } = createWorld();
+    const player = createPlayer(scene);
+    const { zones, colliders } = createZones(scene);
+    setupInput();
+    createHUD();
+    createPanel();
 
-    // === Hover-to-Play: project cards ===
-    const cards = document.querySelectorAll('.project-card[data-vid]');
-    cards.forEach(card => {
-        const vid = card.dataset.vid;
-        const iframe = card.querySelector('.card-iframe');
+    let prevNearestId = null;
+    let lastFootstep = 0;
+    let lastTime = performance.now();
+    let t = 0;
 
-        card.addEventListener('mouseenter', () => {
-            if (iframe && vid) iframe.src = buildYTSrc(vid);
-            playHoverSound();
-            if (cursor) cursor.classList.add('active');
-        });
-
-        card.addEventListener('mouseleave', () => {
-            if (iframe) iframe.src = ''; // stops playback
-            if (cursor) cursor.classList.remove('active');
-        });
-    });
-
-    // === General interactable cursor + audio ===
-    const interactables = document.querySelectorAll('a, .btn, .social-btn');
-    interactables.forEach(el => {
-        el.addEventListener('mouseenter', () => {
-            if (cursor) cursor.classList.add('active');
-            playHoverSound();
-        });
-        el.addEventListener('mouseleave', () => { if (cursor) cursor.classList.remove('active'); });
-        el.addEventListener('click', () => playClickSound());
-    });
-
-    // === Scroll Reveal ===
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.style.opacity = '1';
-                entry.target.style.transform = 'translateY(0) scale(1)';
-                observer.unobserve(entry.target);
+    // E key interaction
+    window.addEventListener('keydown', e => {
+        if ((e.code === 'KeyE' || e.code === 'Space') && !isPanelOpen()) {
+            const playerPos = getPlayerPosition(player);
+            let nearest = null;
+            let nearestDist = Infinity;
+            zones.forEach(z => {
+                const dx = playerPos.x - z.pos.x;
+                const dz = playerPos.z - z.pos.z;
+                const d = Math.sqrt(dx * dx + dz * dz);
+                if (d < z.interactDist && d < nearestDist) { nearestDist = d; nearest = z; }
+            });
+            if (nearest) {
+                playInteract();
+                openPanel(nearest);
             }
-        });
-    }, { threshold: 0.08 });
-
-    document.querySelectorAll('.section-title, .project-card, .skill-category, .about-terminal').forEach(el => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateY(30px) scale(0.97)';
-        el.style.transition = 'all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275)';
-        observer.observe(el);
+        }
     });
+
+    // Game loop
+    function loop(now) {
+        requestAnimationFrame(loop);
+        const dt = Math.min((now - lastTime) / 1000, 0.05);
+        lastTime = now;
+        t += dt;
+
+        if (!isPanelOpen()) {
+            const { isMoving } = updatePlayer(player, camera, colliders, dt);
+
+            // Footsteps
+            if (isMoving && now - lastFootstep > 280) {
+                lastFootstep = now;
+                playFootstep();
+            }
+
+            const playerPos = getPlayerPosition(player);
+            const nearest = updateZones(zones, playerPos, t);
+
+            // Zone enter chime
+            const nid = nearest ? nearest.id : null;
+            if (nid !== prevNearestId) {
+                if (nid) playZoneEnter();
+                prevNearestId = nid;
+            }
+
+            updateHUD(playerPos, nearest);
+        }
+
+        animateWorld(particles, lights, t);
+        renderer.render(scene, camera);
+    }
+
+    requestAnimationFrame(loop);
 });
