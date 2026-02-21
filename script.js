@@ -72,7 +72,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         slimeGeo.computeVertexNormals();
 
-        let currentColor = new THREE.Color(0x00ffcc);
+        let currentColorStr = '#00ffcc';
+        let currentColor = new THREE.Color(currentColorStr);
         const slimeMat = new THREE.MeshToonMaterial({
             color: currentColor,
             gradientMap: gradientMap
@@ -99,7 +100,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Offset starting position
         aiGroup.position.set(10, 0, -10);
 
-        let aiColor = new THREE.Color(0xff00ff);
+        let aiColorStr = '#ff00ff';
+        let aiColor = new THREE.Color(aiColorStr);
         const aiMat = new THREE.MeshToonMaterial({
             color: aiColor,
             gradientMap: gradientMap
@@ -201,6 +203,10 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // Click Hint UI
+        const clickHint = document.getElementById('click-hint');
+        let hintVisible = true;
+
         // Player Interaction State
         const mouse = new THREE.Vector2(0, 0);
         const raycaster = new THREE.Raycaster();
@@ -224,6 +230,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const colors = ['#00ffcc', '#ff00ff', '#ffeb3b', '#ff5722', '#00e5ff', '#b2ff59'];
 
+        function getNextColor(lastColor) {
+            const available = colors.filter(c => c !== lastColor);
+            return available[Math.floor(Math.random() * available.length)];
+        }
+
         window.addEventListener('mousemove', (e) => {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
@@ -231,17 +242,25 @@ document.addEventListener('DOMContentLoaded', () => {
             raycaster.ray.intersectPlane(plane, targetPos);
         });
 
-        window.addEventListener('mousedown', (e) => {
-            if (e.button !== 0 || isJumping) return;
-
-            // Start jump
+        function triggerPlayerJump(endPos) {
+            if (isJumping) return;
             isJumping = true;
             jumpTime = 0;
             jumpStart.copy(slimeGroup.position);
+            jumpEnd.copy(endPos);
 
-            // Jump to current mouse intersect
+            if (hintVisible && clickHint) {
+                hintVisible = false;
+                clickHint.classList.add('hidden');
+            }
+        }
+
+        window.addEventListener('mousedown', (e) => {
+            if (e.button !== 0 || isJumping) return;
+            const tempEnd = new THREE.Vector3();
             raycaster.setFromCamera(mouse, camera);
-            raycaster.ray.intersectPlane(plane, jumpEnd);
+            raycaster.ray.intersectPlane(plane, tempEnd);
+            triggerPlayerJump(tempEnd);
         });
 
         function spawnSplat(pos, colorHex) {
@@ -331,6 +350,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     scene.remove(c);
                     c.geometry.dispose();
                     coins.splice(i, 1);
+
+                    // Trigger jump using the current cursor target position
+                    const tempEnd = new THREE.Vector3();
+                    raycaster.setFromCamera(mouse, camera);
+                    raycaster.ray.intersectPlane(plane, tempEnd);
+                    triggerPlayerJump(tempEnd);
                 }
             }
 
@@ -378,8 +403,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     aiMesh.scale.set(1.5, 0.5, 1.5);
 
-                    const newColorStr = colors[Math.floor(Math.random() * colors.length)];
-                    aiColor.set(newColorStr);
+                    aiColorStr = getNextColor(aiColorStr);
+                    aiColor.set(aiColorStr);
                     aiMat.color = aiColor;
 
                     spawnSplat(aiGroup.position, aiColor);
@@ -412,10 +437,21 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            aiEyeL.position.set(-0.5, 1.1, 1.3);
-            aiEyeR.position.set(0.5, 1.1, 1.3);
             aiLastPos.copy(aiGroup.position);
 
+            // -- CLICK HINT PROJECTION --
+            if (hintVisible && clickHint) {
+                const vector = new THREE.Vector3();
+                vector.copy(slimeGroup.position);
+                vector.y += 4; // float above slime
+                vector.project(camera);
+
+                // Map to 2D screen space
+                const x = (vector.x * 0.5 + 0.5) * window.innerWidth;
+                const y = (vector.y * -0.5 + 0.5) * window.innerHeight;
+
+                clickHint.style.transform = `translate(-50%, -50%) translate(${x}px, ${y}px)`;
+            }
 
             // -- PLAYER SLIME LOGIC --
             if (isJumping) {
@@ -442,16 +478,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     slimeGroup.position.copy(jumpEnd);
                     slimeGroup.position.y = 0;
 
-                    // Squash impact
                     slimeMesh.scale.set(1.5, 0.5, 1.5);
 
-                    // New Color
-                    const newColorStr = colors[Math.floor(Math.random() * colors.length)];
-                    currentColor.set(newColorStr);
+                    // New Unique Color
+                    currentColorStr = getNextColor(currentColorStr);
+                    currentColor.set(currentColorStr);
                     slimeMat.color = currentColor;
 
                     // Update CSS global
-                    document.documentElement.style.setProperty('--accent', newColorStr);
+                    document.documentElement.style.setProperty('--accent', currentColorStr);
                     // Update the glow specifically with opacity applied
                     // Optional: You can do text manipulation to set alpha, or just rely on CSS
 
