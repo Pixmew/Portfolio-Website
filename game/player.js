@@ -1,8 +1,8 @@
 import * as THREE from 'three';
 import { WORLD_SIZE } from './world.js';
 
-const SPEED = 0.15;
-const TURN_SPEED = 10;
+const SPEED = 0.14;
+const TURN_SPEED = 9;
 const CAMERA_HEIGHT = 18;
 const CAMERA_DIST = 20;
 const CAMERA_LERP = 0.07;
@@ -11,106 +11,108 @@ const BOUNDARY = WORLD_SIZE / 2 - 1.5;
 export function createPlayer(scene) {
     const group = new THREE.Group();
 
-    // — Body suit (dark blue-gray, slightly emissive seams) —
-    const bodyMat = new THREE.MeshStandardMaterial({ color: 0x0d1525, roughness: 0.35, metalness: 0.85, emissive: 0x1a2a4a, emissiveIntensity: 0.3 });
-    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.42, 0.95, 6, 12), bodyMat);
-    body.position.y = 1.0;
+    // — Legs —
+    const pantsMat = new THREE.MeshStandardMaterial({ color: 0x4a6741, roughness: 0.8, metalness: 0 });
+    const leftLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.55, 4, 8), pantsMat);
+    leftLeg.position.set(-0.22, 0.5, 0);
+    group.add(leftLeg);
+    const rightLeg = new THREE.Mesh(new THREE.CapsuleGeometry(0.18, 0.55, 4, 8), pantsMat);
+    rightLeg.position.set(0.22, 0.5, 0);
+    group.add(rightLeg);
+
+    // — Boots —
+    const bootMat = new THREE.MeshStandardMaterial({ color: 0x3b2314, roughness: 0.9, metalness: 0 });
+    [-0.22, 0.22].forEach(side => {
+        const boot = new THREE.Mesh(new THREE.BoxGeometry(0.28, 0.2, 0.38), bootMat);
+        boot.position.set(side, 0.1, 0.07);
+        group.add(boot);
+    });
+
+    // — Body / Jacket —
+    const jacketMat = new THREE.MeshStandardMaterial({ color: 0x8b6914, roughness: 0.7, metalness: 0 });
+    const body = new THREE.Mesh(new THREE.CapsuleGeometry(0.38, 0.6, 5, 10), jacketMat);
+    body.position.y = 1.25;
     body.castShadow = true;
     group.add(body);
 
-    // — Shoulder armour pads —
-    const padMat = new THREE.MeshStandardMaterial({ color: 0x4f46e5, emissive: 0x4f46e5, emissiveIntensity: 0.7, roughness: 0.2, metalness: 0.95 });
-    [-0.52, 0.52].forEach(side => {
-        const pad = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.22, 0.42), padMat);
-        pad.position.set(side, 1.5, 0);
-        pad.castShadow = true;
-        group.add(pad);
+    // — Backpack —
+    const backpackMat = new THREE.MeshStandardMaterial({ color: 0xc0392b, roughness: 0.8, metalness: 0 });
+    const backpack = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.65, 0.25), backpackMat);
+    backpack.position.set(0, 1.3, -0.42);
+    group.add(backpack);
+    // Backpack strap
+    const strap = new THREE.Mesh(new THREE.BoxGeometry(0.45, 0.06, 0.06), new THREE.MeshStandardMaterial({ color: 0x7f8c8d, roughness: 0.7 }));
+    strap.position.set(0, 1.55, -0.18);
+    group.add(strap);
+
+    // — Arms —
+    const armMat = new THREE.MeshStandardMaterial({ color: 0x8b6914, roughness: 0.7, metalness: 0 });
+    [-0.56, 0.56].forEach(side => {
+        const arm = new THREE.Mesh(new THREE.CapsuleGeometry(0.14, 0.45, 4, 8), armMat);
+        arm.position.set(side, 1.1, 0);
+        group.add(arm);
     });
 
-    // — Helmet — 
-    const helmetMat = new THREE.MeshStandardMaterial({ color: 0x0a1020, roughness: 0.25, metalness: 0.95 });
-    const helmet = new THREE.Mesh(new THREE.SphereGeometry(0.33, 12, 8, 0, Math.PI * 2, 0, Math.PI * 0.65), helmetMat);
-    helmet.position.y = 1.9;
-    helmet.castShadow = true;
-    group.add(helmet);
+    // — Head / Face —
+    const skinMat = new THREE.MeshStandardMaterial({ color: 0xf4c88a, roughness: 0.7, metalness: 0 });
+    const head = new THREE.Mesh(new THREE.SphereGeometry(0.29, 12, 10), skinMat);
+    head.position.y = 1.9;
+    head.castShadow = true;
+    group.add(head);
 
-    // — Visor (glowing cyan lens) —
-    const visorMat = new THREE.MeshStandardMaterial({ color: 0x06b6d4, emissive: 0x06b6d4, emissiveIntensity: 2.5, roughness: 0.0, metalness: 0.5, transparent: true, opacity: 0.9 });
-    const visor = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 8, -0.9, 1.8, 0.45, 1.0), visorMat);
-    visor.position.set(0, 1.9, 0.16);
-    group.add(visor);
+    // — Hat —
+    const hatMat = new THREE.MeshStandardMaterial({ color: 0xc68642, roughness: 0.8, metalness: 0 });
+    const hatBrim = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.52, 0.08, 16), hatMat);
+    hatBrim.position.y = 2.17;
+    group.add(hatBrim);
+    const hatTop = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.42, 0.52, 16), hatMat);
+    hatTop.position.y = 2.45;
+    group.add(hatTop);
 
-    // — Chest emblem (small glowing square) —
-    const emblem = new THREE.Mesh(new THREE.BoxGeometry(0.18, 0.18, 0.06), new THREE.MeshStandardMaterial({ color: 0xec4899, emissive: 0xec4899, emissiveIntensity: 3 }));
-    emblem.position.set(0, 1.1, 0.43);
-    group.add(emblem);
-
-    // — Belt trim line —
-    const belt = new THREE.Mesh(new THREE.TorusGeometry(0.44, 0.04, 6, 20), new THREE.MeshStandardMaterial({ color: 0x4f46e5, emissive: 0x4f46e5, emissiveIntensity: 1.5 }));
-    belt.position.y = 0.72;
-    belt.rotation.x = Math.PI / 2;
-    group.add(belt);
-
-    // — Glow light (soft player aura) —
-    const playerLight = new THREE.PointLight(0x4f46e5, 3.5, 6);
-    playerLight.position.y = 1.2;
+    // — Soft player light (warm sun bounce) —
+    const playerLight = new THREE.PointLight(0xffe8a0, 1.2, 5);
+    playerLight.position.y = 1.5;
     group.add(playerLight);
 
-    // — Footstep ring flash (shown when stepping) —
+    // — Step ring (grass ripple effect) —
     const stepRing = new THREE.Mesh(
         new THREE.RingGeometry(0.3, 0.45, 20),
-        new THREE.MeshBasicMaterial({ color: 0x4f46e5, transparent: true, opacity: 0, side: THREE.DoubleSide })
+        new THREE.MeshBasicMaterial({ color: 0xadd9a0, transparent: true, opacity: 0, side: THREE.DoubleSide })
     );
     stepRing.rotation.x = -Math.PI / 2;
     stepRing.position.y = 0.04;
     group.add(stepRing);
 
-    // — Shadow decal —
-    const shadow = new THREE.Mesh(
-        new THREE.CircleGeometry(0.55, 16),
-        new THREE.MeshBasicMaterial({ color: 0x000000, transparent: true, opacity: 0.4 })
-    );
-    shadow.rotation.x = -Math.PI / 2;
-    shadow.position.y = 0.02;
-    group.add(shadow);
-
     group.position.set(0, 0, 8);
     scene.add(group);
 
-    return { group, body, helmet, visor, emblem, belt, playerLight, stepRing };
+    return { group, body, head, leftLeg, rightLeg, playerLight, stepRing };
 }
 
 // ── Input ─────────────────────────────────────────────────────────────────────
 const keys = {};
 let touchInput = { x: 0, z: 0 };
-
 export function setupInput() {
     window.addEventListener('keydown', e => { keys[e.code] = true; });
     window.addEventListener('keyup', e => { keys[e.code] = false; });
     window.setTouchInput = (x, z) => { touchInput.x = x; touchInput.z = z; };
 }
 
-// ── State ─────────────────────────────────────────────────────────────────────
-let currentAngle = 0;
-let bobTime = 0;
-let stepFlash = 0; // 0..1 flash timer
+let currentAngle = 0, bobTime = 0, stepFlash = 0;
 
 export function updatePlayer(player, camera, zoneColliders, dt) {
-    const { group, body, helmet, visor, emblem, belt, playerLight, stepRing } = player;
+    const { group, body, head, leftLeg, rightLeg, playerLight, stepRing } = player;
 
-    // Input
     let dx = touchInput.x, dz = touchInput.z;
     if (keys['KeyW'] || keys['ArrowUp']) dz -= 1;
     if (keys['KeyS'] || keys['ArrowDown']) dz += 1;
     if (keys['KeyA'] || keys['ArrowLeft']) dx -= 1;
     if (keys['KeyD'] || keys['ArrowRight']) dx += 1;
-
     const len = Math.sqrt(dx * dx + dz * dz);
     if (len > 1) { dx /= len; dz /= len; }
     const isMoving = len > 0.01;
 
     if (isMoving) {
-        // Smooth rotation toward movement direction
         const target = Math.atan2(dx, dz) + Math.PI;
         let diff = target - currentAngle;
         while (diff > Math.PI) diff -= Math.PI * 2;
@@ -118,53 +120,40 @@ export function updatePlayer(player, camera, zoneColliders, dt) {
         currentAngle += diff * Math.min(TURN_SPEED * dt, 1);
         group.rotation.y = currentAngle;
 
-        // Move + boundary + zone collider check
         const nx = group.position.x + dx * SPEED;
         const nz = group.position.z + dz * SPEED;
         const bx = Math.max(-BOUNDARY, Math.min(BOUNDARY, nx));
         const bz = Math.max(-BOUNDARY, Math.min(BOUNDARY, nz));
-
         let blocked = false;
         for (const col of zoneColliders) {
             if (bx > col.x - col.halfSize.x && bx < col.x + col.halfSize.x &&
-                bz > col.z - col.halfSize.z && bz < col.z + col.halfSize.z) {
-                blocked = true; break;
-            }
+                bz > col.z - col.halfSize.z && bz < col.z + col.halfSize.z) { blocked = true; break; }
         }
         if (!blocked) { group.position.x = bx; group.position.z = bz; }
     }
 
-    // ── Animations ──
-    bobTime += dt * (isMoving ? 7 : 1.2);
+    bobTime += dt * (isMoving ? 7.5 : 1);
 
-    // Body bob
-    const bobY = Math.sin(bobTime) * (isMoving ? 0.07 : 0.025);
-    body.position.y = 1.0 + bobY;
-    helmet.position.y = 1.9 + bobY;
-    visor.position.y = 1.9 + bobY;
-    emblem.position.y = 1.1 + bobY;
-    belt.position.y = 0.72 + bobY;
+    // Body & head bob
+    const bobY = Math.sin(bobTime) * (isMoving ? 0.065 : 0.02);
+    body.position.y = 1.25 + bobY;
+    head.position.y = 1.9 + bobY;
 
-    // Visor + chest emblem pulse
-    visor.material.emissiveIntensity = 2 + Math.sin(bobTime * 2.5) * 0.6;
-    emblem.material.emissiveIntensity = 2.5 + Math.sin(bobTime * 3 + 1) * 1.5;
-
-    // Player aura pulse
-    playerLight.intensity = 3 + Math.sin(bobTime * 2) * 0.8;
+    // Leg swing
+    leftLeg.rotation.x = Math.sin(bobTime) * (isMoving ? 0.4 : 0.05);
+    rightLeg.rotation.x = -Math.sin(bobTime) * (isMoving ? 0.4 : 0.05);
 
     // Step ring flash
-    if (isMoving) {
-        const halfCycle = bobTime % (Math.PI * 2);
-        if (halfCycle > 0 && halfCycle < 0.1) stepFlash = 1.0;
-    }
+    const halfCycle = bobTime % (Math.PI * 2);
+    if (isMoving && halfCycle > 0 && halfCycle < 0.1) stepFlash = 1.0;
     if (stepFlash > 0) {
-        stepFlash = Math.max(0, stepFlash - dt * 6);
-        stepRing.material.opacity = stepFlash * 0.5;
-        const s = 1 + (1 - stepFlash) * 1.5;
+        stepFlash = Math.max(0, stepFlash - dt * 5);
+        stepRing.material.opacity = stepFlash * 0.45;
+        const s = 1 + (1 - stepFlash) * 2;
         stepRing.scale.set(s, s, 1);
     }
 
-    // Camera follow
+    // Camera
     camera.position.x += (group.position.x - camera.position.x) * CAMERA_LERP;
     camera.position.y += (CAMERA_HEIGHT - camera.position.y) * CAMERA_LERP;
     camera.position.z += (group.position.z + CAMERA_DIST - camera.position.z) * CAMERA_LERP;
