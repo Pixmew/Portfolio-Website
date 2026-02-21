@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+</head>
+
+<body>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+        pdfjsLib.getDocument('Yash Shete.pdf').promise.then(pdf => {
+            let promises = [];
+            for (let i = 1; i <= pdf.numPages; i++) {
+                promises.push(
+                    pdf.getPage(i).then(page => page.getTextContent()).then(content => {
+                        return content.items.map(item => item.str).join(' ');
+                    })
+                );
+            }
+            Promise.all(promises).then(pages => {
+                console.log("PDF_TEXT_START");
+                console.log(pages.join('\n'));
+                console.log("PDF_TEXT_END");
+            });
+        }).catch(err => console.error("PDF_ERROR", err));
+    </script>
+</body>
+
+</html>
