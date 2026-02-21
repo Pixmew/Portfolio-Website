@@ -32,7 +32,7 @@ function playInteract() {
 
 // --- Boot ---
 document.addEventListener('DOMContentLoaded', () => {
-    const { renderer, scene, camera, walls, particles, lights } = createWorld();
+    const { renderer, scene, camera, walls, particles, lights, lamps } = createWorld();
     const player = createPlayer(scene);
     const { zones, colliders } = createZones(scene);
     setupInput();
@@ -92,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
             updateHUD(playerPos, nearest);
         }
 
-        animateWorld(particles, lights, t);
+        animateWorld(particles, lights, lamps, t);
         renderer.render(scene, camera);
     }
 
