@@ -33,16 +33,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const ship = new THREE.Group();
         shipContainer.add(ship);
 
-        // Hull
-        const hullGeo = new THREE.ConeGeometry(1, 4, 8);
+        // Hull (Bright White/Silver)
+        const hullGeo = new THREE.ConeGeometry(1.2, 4.5, 8);
         hullGeo.rotateX(Math.PI / 2); // Point forward along Z
-        const hullMat = new THREE.MeshStandardMaterial({ color: 0x111122, metalness: 0.8, roughness: 0.2 });
+        const hullMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.2 });
         const hull = new THREE.Mesh(hullGeo, hullMat);
         ship.add(hull);
 
-        // Wings
-        const wingGeo = new THREE.BoxGeometry(6, 0.2, 1.5);
-        const wingMat = new THREE.MeshStandardMaterial({ color: 0x222233, metalness: 0.7, roughness: 0.3 });
+        // Wings (Bright Orange/Accent)
+        const wingGeo = new THREE.BoxGeometry(7, 0.4, 1.8);
+        const wingMat = new THREE.MeshStandardMaterial({ color: 0xff5500, metalness: 0.4, roughness: 0.3 });
         const wing = new THREE.Mesh(wingGeo, wingMat);
         wing.position.set(0, 0, 1);
         ship.add(wing);
@@ -93,7 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
         const asteroids = [];
         const particles = [];
 
-        const laserGeo = new THREE.CylinderGeometry(0.08, 0.08, 1.5, 8);
+        // Thicker, brighter lasers
+        const laserGeo = new THREE.CylinderGeometry(0.2, 0.2, 2.5, 8);
         laserGeo.rotateX(Math.PI / 2);
         const laserMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc });
 
