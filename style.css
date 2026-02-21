@@ -21,6 +21,8 @@
     --text-muted: #94a3b8;
     --text-dark: #0f172a;
 
+    transition: --accent 0.5s ease, --accent-glow 0.5s ease;
+
     --radius: 16px;
     --font-h: 'Outfit', sans-serif;
     --font-b: 'Inter', sans-serif;
@@ -712,38 +714,6 @@ body {
     font-size: 13px;
     color: var(--text-muted);
     border-top: 1px solid var(--border-subtle);
-}
-
-/* ── COMBO UI ══════════════════════════════════════════════════════════════ */
-#combo-ui {
-    position: fixed;
-    bottom: 32px;
-    right: 32px;
-    font-family: var(--font-h);
-    font-size: 24px;
-    font-weight: 900;
-    color: var(--accent);
-    text-shadow: var(--accent-glow);
-    z-index: 1000;
-    pointer-events: none;
-    background: var(--bg-panel);
-    padding: 12px 24px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border-glow);
-    backdrop-filter: blur(12px);
-    transition: transform 0.1s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    opacity: 0;
-    /* Hidden until first combo */
-    transform: translateY(20px);
-}
-
-#combo-ui.visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-#combo-ui.bump {
-    transform: scale(1.15) translateY(0);
 }
 
 /* ── REVEAL ANIMATIONS ───────────────────────────────────────────────────────── */

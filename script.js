@@ -1,282 +1,310 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // ── 3D SPACESHIP BACKGROUND (Three.js) ───────────────────────
+    // ── GHIBLI SLIME BACKGROUND ──────────────────────────────────────────────
     const canvas = document.getElementById('bg-canvas');
     if (canvas && window.THREE) {
         const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        const scene = new THREE.Scene();
-        scene.fog = new THREE.FogExp2(0x06080d, 0.015);
+        // Shadow map setup needed?
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-        // TOP-DOWN CAMERA
-        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
-        camera.position.set(0, 60, 0); // Looking straight down
+        const scene = new THREE.Scene();
+
+        // Soft pastel fog
+        scene.fog = new THREE.FogExp2(0x1a1c29, 0.015);
+
+        // Orthographic Camera for 2D look
+        const aspect = window.innerWidth / window.innerHeight;
+        const frustumSize = 40;
+        const camera = new THREE.OrthographicCamera(
+            frustumSize * aspect / -2,
+            frustumSize * aspect / 2,
+            frustumSize / 2,
+            frustumSize / -2,
+            1,
+            1000
+        );
+        camera.position.set(0, 50, 50); // Angled top-down (45 degrees)
         camera.lookAt(0, 0, 0);
 
         // Lights
-        const ambientLight = new THREE.AmbientLight(0x404040, 2);
+        const ambientLight = new THREE.AmbientLight(0xddeeff, 0.6); // Soft blue ambient
         scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0x00ffcc, 1.5);
-        dirLight.position.set(10, 30, 10);
+
+        const dirLight = new THREE.DirectionalLight(0xfff5e6, 1.2); // Warm sun
+        dirLight.position.set(20, 50, 20);
+        dirLight.castShadow = true;
+        dirLight.shadow.mapSize.width = 1024;
+        dirLight.shadow.mapSize.height = 1024;
+        dirLight.shadow.camera.left = -30;
+        dirLight.shadow.camera.right = 30;
+        dirLight.shadow.camera.top = 30;
+        dirLight.shadow.camera.bottom = -30;
         scene.add(dirLight);
-        const backLight = new THREE.DirectionalLight(0xff00ff, 1.2);
-        backLight.position.set(-10, 10, -10);
-        scene.add(backLight);
 
-        // Ship Container (handles position & yaw)
-        const shipContainer = new THREE.Group();
-        scene.add(shipContainer);
+        // Toon Shading Gradient Map
+        // Create a 3-step gradient texture
+        const canvasMap = document.createElement('canvas');
+        canvasMap.width = 3;
+        canvasMap.height = 1;
+        const ctx = canvasMap.getContext('2d');
+        ctx.fillStyle = '#444444'; ctx.fillRect(0, 0, 1, 1);
+        ctx.fillStyle = '#888888'; ctx.fillRect(1, 0, 1, 1);
+        ctx.fillStyle = '#ffffff'; ctx.fillRect(2, 0, 1, 1);
+        const gradientMap = new THREE.CanvasTexture(canvasMap);
+        gradientMap.magFilter = THREE.NearestFilter;
+        gradientMap.minFilter = THREE.NearestFilter;
 
-        // Ship Model (handles roll and pitch relative to container)
-        const ship = new THREE.Group();
-        shipContainer.add(ship);
+        // Slime setup
+        const slimeGroup = new THREE.Group();
+        scene.add(slimeGroup);
 
-        // Hull (Bright White/Silver)
-        const hullGeo = new THREE.ConeGeometry(1.2, 4.5, 8);
-        hullGeo.rotateX(Math.PI / 2); // Point forward along Z
-        const hullMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 0.3, roughness: 0.2 });
-        const hull = new THREE.Mesh(hullGeo, hullMat);
-        ship.add(hull);
-
-        // Wings (Bright Orange/Accent)
-        const wingGeo = new THREE.BoxGeometry(7, 0.4, 1.8);
-        const wingMat = new THREE.MeshStandardMaterial({ color: 0xff5500, metalness: 0.4, roughness: 0.3 });
-        const wing = new THREE.Mesh(wingGeo, wingMat);
-        wing.position.set(0, 0, 1);
-        ship.add(wing);
-
-        // Cockpit
-        const cockpitGeo = new THREE.CylinderGeometry(0.4, 0.4, 1.2, 8);
-        cockpitGeo.rotateX(Math.PI / 2);
-        const cockpitMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc, emissive: 0x00ffcc, emissiveIntensity: 0.6, transparent: true, opacity: 0.9 });
-        const cockpit = new THREE.Mesh(cockpitGeo, cockpitMat);
-        cockpit.position.set(0, 0.5, -0.2);
-        ship.add(cockpit);
-
-        // Engine glow
-        const engineGeo = new THREE.CylinderGeometry(0.3, 0.5, 1, 8);
-        engineGeo.rotateX(Math.PI / 2);
-        const engineMat = new THREE.MeshBasicMaterial({ color: 0x00ffff });
-        const engine1 = new THREE.Mesh(engineGeo, engineMat);
-        engine1.position.set(-1.5, 0, 1.5);
-        const engine2 = new THREE.Mesh(engineGeo, engineMat);
-        engine2.position.set(1.5, 0, 1.5);
-        ship.add(engine1, engine2);
-
-        // Starfield
-        const starsGeo = new THREE.BufferGeometry();
-        const starsPos = new Float32Array(300 * 3);
-        for (let i = 0; i < 300; i++) {
-            starsPos[i * 3] = (Math.random() - 0.5) * 100;
-            starsPos[i * 3 + 1] = (Math.random() - 0.5) * 40 - 20; // Y depth
-            starsPos[i * 3 + 2] = (Math.random() - 0.5) * 100;
+        const slimeGeo = new THREE.SphereGeometry(1.5, 32, 32);
+        // Flatten bottom slightly
+        const pos = slimeGeo.attributes.position;
+        for (let i = 0; i < pos.count; i++) {
+            if (pos.getY(i) < -0.8) {
+                pos.setY(i, -0.8 + (pos.getY(i) - -0.8) * 0.5);
+            }
         }
-        starsGeo.setAttribute('position', new THREE.BufferAttribute(starsPos, 3));
-        const starsMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.5 });
-        const stars = new THREE.Points(starsGeo, starsMat);
-        scene.add(stars);
+        slimeGeo.computeVertexNormals();
 
-        // Mouse tracking on X/Z plane
+        let currentColor = new THREE.Color(0x00ffcc);
+        const slimeMat = new THREE.MeshToonMaterial({
+            color: currentColor,
+            gradientMap: gradientMap
+        });
+        const slimeMesh = new THREE.Mesh(slimeGeo, slimeMat);
+        slimeMesh.position.y = 1.2; // So it sits on the ground
+        slimeMesh.castShadow = true;
+        slimeMesh.receiveShadow = true;
+        slimeGroup.add(slimeMesh);
+
+        // Slime Eyes (Kawaii)
+        const eyeGeo = new THREE.SphereGeometry(0.2, 16, 16);
+        const eyeMat = new THREE.MeshBasicMaterial({ color: 0x111111 });
+        const eyeL = new THREE.Mesh(eyeGeo, eyeMat);
+        eyeL.position.set(-0.5, 1.5, 1.3);
+        const eyeR = new THREE.Mesh(eyeGeo, eyeMat);
+        eyeR.position.set(0.5, 1.5, 1.3);
+        slimeGroup.add(eyeL, eyeR);
+
+        // Forest Background Environment
+        const envGroup = new THREE.Group();
+        scene.add(envGroup);
+
+        const groundGeo = new THREE.PlaneGeometry(200, 200);
+        const groundMat = new THREE.MeshStandardMaterial({ color: 0x1a2624, roughness: 1 });
+        const ground = new THREE.Mesh(groundGeo, groundMat);
+        ground.rotation.x = -Math.PI / 2;
+        ground.receiveShadow = true;
+        envGroup.add(ground);
+
+        // Tree Billboards
+        const treeCount = 60;
+        const treeMats = [
+            new THREE.MeshBasicMaterial({ color: 0x2d4c3b, transparent: true, opacity: 0.9 }),
+            new THREE.MeshBasicMaterial({ color: 0x3a5a4a, transparent: true, opacity: 0.9 }),
+            new THREE.MeshBasicMaterial({ color: 0x1f362a, transparent: true, opacity: 0.9 })
+        ];
+
+        for (let i = 0; i < treeCount; i++) {
+            // Quick stylized tree using a cylinder and cone instead of texture to keep it robust
+            const trunkGeo = new THREE.CylinderGeometry(0.2, 0.4, 3, 5);
+            const trunkMat = new THREE.MeshToonMaterial({ color: 0x4a3b32, gradientMap: gradientMap });
+            const trunk = new THREE.Mesh(trunkGeo, trunkMat);
+
+            const leavesGeo = new THREE.ConeGeometry(2 + Math.random(), 4 + Math.random() * 2, 6);
+            const leavesMat = new THREE.MeshToonMaterial({ color: [0x2d4c3b, 0x3a5a4a, 0x1f362a][Math.floor(Math.random() * 3)], gradientMap: gradientMap });
+            const leaves = new THREE.Mesh(leavesGeo, leavesMat);
+            leaves.position.y = 3;
+
+            const treeBase = new THREE.Group();
+            treeBase.add(trunk);
+            treeBase.add(leaves);
+
+            const angle = Math.random() * Math.PI * 2;
+            const radius = 15 + Math.random() * 35; // Keep center clear
+            treeBase.position.set(Math.cos(angle) * radius, 1.5, Math.sin(angle) * radius);
+
+            // Random slight rotation to face camera roughly
+            treeBase.rotation.y = Math.random() * Math.PI;
+
+            trunk.castShadow = true;
+            leaves.castShadow = true;
+            trunk.receiveShadow = true;
+            leaves.receiveShadow = true;
+
+            envGroup.add(treeBase);
+        }
+
+        // Splats Array
+        const splats = [];
+
+        // Interaction State
         const mouse = new THREE.Vector2(0, 0);
         const raycaster = new THREE.Raycaster();
         const plane = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+        const targetPos = new THREE.Vector3(0, 0, 0);
+
+        let isJumping = false;
+        let jumpTime = 0;
+        const jumpDuration = 0.6;
+        let jumpStart = new THREE.Vector3();
+        let jumpEnd = new THREE.Vector3();
+
+        const colors = ['#00ffcc', '#ff00ff', '#ffeb3b', '#ff5722', '#00e5ff', '#b2ff59'];
 
         window.addEventListener('mousemove', (e) => {
             mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
             mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.ray.intersectPlane(plane, targetPos);
         });
-
-        // Game Entities
-        const lasers = [];
-        const asteroids = [];
-        const particles = [];
-
-        // Thicker, brighter lasers
-        const laserGeo = new THREE.CylinderGeometry(0.2, 0.2, 2.5, 8);
-        laserGeo.rotateX(Math.PI / 2);
-        const laserMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc });
-
-        const astGeo = new THREE.DodecahedronGeometry(1.5, 0);
-        const astMat = new THREE.MeshStandardMaterial({ color: 0x555555, roughness: 0.8 });
 
         window.addEventListener('mousedown', (e) => {
-            if (e.button !== 0) return;
+            if (e.button !== 0 || isJumping) return;
 
-            const laser = new THREE.Mesh(laserGeo, laserMat);
-            laser.position.copy(shipContainer.position);
+            // Start jump
+            isJumping = true;
+            jumpTime = 0;
+            jumpStart.copy(slimeGroup.position);
 
-            // Fire forward from the container's current rotation
-            const direction = new THREE.Vector3(0, 0, 1).applyQuaternion(shipContainer.quaternion).normalize();
-            laser.position.add(direction.clone().multiplyScalar(2)); // spawn a bit ahead
-
-            laser.userData.velocity = direction.multiplyScalar(3.0);
-            scene.add(laser);
-            lasers.push(laser);
-
-            // Recoil
-            shipContainer.position.add(direction.clone().multiplyScalar(-0.5));
+            // Jump to current mouse intersect
+            raycaster.setFromCamera(mouse, camera);
+            raycaster.ray.intersectPlane(plane, jumpEnd);
         });
 
-        // Combo UI
-        let comboCount = 0;
-        const comboEl = document.getElementById('combo-ui');
-        function addCombo() {
-            comboCount++;
-            if (comboEl) {
-                comboEl.innerText = 'COMBO: ' + comboCount;
-                comboEl.classList.add('visible');
-                comboEl.classList.add('bump');
-                setTimeout(() => comboEl.classList.remove('bump'), 100);
-            }
-        }
+        function spawnSplat(pos, colorHex) {
+            const splatGeo = new THREE.CircleGeometry(2 + Math.random(), 16);
+            const splatMat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 0.8, depthWrite: false });
+            const splat = new THREE.Mesh(splatGeo, splatMat);
+            splat.rotation.x = -Math.PI / 2;
+            splat.position.copy(pos);
+            splat.position.y = 0.01; // Slightly above ground
 
-        function createBlast(pos) {
-            const pGeo = new THREE.BoxGeometry(0.3, 0.3, 0.3);
-            const pMat = new THREE.MeshBasicMaterial({ color: 0x00ffcc });
-            for (let i = 0; i < 10; i++) {
-                const p = new THREE.Mesh(pGeo, pMat);
-                p.position.copy(pos);
-                p.userData.velocity = new THREE.Vector3((Math.random() - 0.5) * 1.5, (Math.random() - 0.5) * 1.5, (Math.random() - 0.5) * 1.5);
-                p.userData.life = 1.0;
-                scene.add(p);
-                particles.push(p);
+            // Random rotation for variety
+            splat.rotation.z = Math.random() * Math.PI * 2;
+            // Scale randomly
+            const s = 0.5 + Math.random() * 0.5;
+            splat.scale.set(s, s, s);
+
+            scene.add(splat);
+            splats.push(splat);
+
+            if (splats.length > 20) {
+                const oldSplat = splats.shift();
+                scene.remove(oldSplat);
+                oldSplat.geometry.dispose();
+                oldSplat.material.dispose();
             }
         }
 
         function onWindowResize() {
-            camera.aspect = window.innerWidth / window.innerHeight;
+            const aspect = window.innerWidth / window.innerHeight;
+            camera.left = -frustumSize * aspect / 2;
+            camera.right = frustumSize * aspect / 2;
+            camera.top = frustumSize / 2;
+            camera.bottom = -frustumSize / 2;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         }
         window.addEventListener('resize', onWindowResize);
 
         const clock = new THREE.Clock();
-        const targetPos = new THREE.Vector3();
+        let velocity = new THREE.Vector3();
+        let lastPos = new THREE.Vector3();
 
         function animate() {
             requestAnimationFrame(animate);
             const dt = Math.min(clock.getDelta(), 0.1);
             const t = clock.getElapsedTime();
 
-            // Intersect mouse with X/Z plane
-            raycaster.setFromCamera(mouse, camera);
-            raycaster.ray.intersectPlane(plane, targetPos);
+            if (isJumping) {
+                jumpTime += dt;
+                const progress = Math.min(jumpTime / jumpDuration, 1.0);
 
-            // Move container towards target
-            shipContainer.position.lerp(targetPos, 4 * dt);
+                // Parabola trajectory
+                const ease = 1 - Math.pow(1 - progress, 3); // Ease out cubic for horizontal
+                slimeGroup.position.lerpVectors(jumpStart, jumpEnd, ease);
 
-            // Calculate rotation for container
-            const direction = targetPos.clone().sub(shipContainer.position);
-            const dist = direction.length();
-            if (dist > 0.1) {
-                direction.normalize();
-                const lookPos = shipContainer.position.clone().add(direction);
-                shipContainer.lookAt(lookPos);
+                // Height arc (sin wave)
+                const height = Math.sin(progress * Math.PI) * 8;
+                slimeGroup.position.y = height;
 
-                // Bank (roll) and Pitch based on mouse pos
-                ship.rotation.z = THREE.MathUtils.lerp(ship.rotation.z, -mouse.x * Math.PI / 3, 5 * dt);
-                ship.rotation.x = THREE.MathUtils.lerp(ship.rotation.x, mouse.y * Math.PI / 6, 5 * dt);
+                // Stretch during jump based on vertical movement
+                if (progress < 0.5) {
+                    slimeMesh.scale.set(0.8, 1.4, 0.8); // Stretching up
+                } else {
+                    slimeMesh.scale.set(0.9, 1.2, 0.9); // Falling down stretch
+                }
+
+                if (progress >= 1.0) {
+                    isJumping = false;
+                    slimeGroup.position.copy(jumpEnd);
+                    slimeGroup.position.y = 0;
+
+                    // Squash impact
+                    slimeMesh.scale.set(1.5, 0.5, 1.5);
+
+                    // New Color
+                    const newColorStr = colors[Math.floor(Math.random() * colors.length)];
+                    currentColor.set(newColorStr);
+                    slimeMat.color = currentColor;
+
+                    // Update CSS global
+                    document.documentElement.style.setProperty('--accent', newColorStr);
+                    // Update the glow specifically with opacity applied
+                    // Optional: You can do text manipulation to set alpha, or just rely on CSS
+
+                    // Splat
+                    spawnSplat(slimeGroup.position, currentColor);
+                }
             } else {
-                ship.rotation.z = THREE.MathUtils.lerp(ship.rotation.z, 0, 5 * dt);
-                ship.rotation.x = THREE.MathUtils.lerp(ship.rotation.x, 0, 5 * dt);
-            }
+                // Spring following
+                slimeGroup.position.lerp(targetPos, 5 * dt);
 
-            // Add bobbing to inner ship
-            ship.position.y = Math.sin(t * 3) * 0.5;
+                // Ground level
+                slimeGroup.position.y = 0;
 
-            // Move stars towards +Z to simulate moving forward
-            const posArray = stars.geometry.attributes.position.array;
-            for (let i = 2; i < posArray.length; i += 3) {
-                posArray[i] += 15 * dt;
-                if (posArray[i] > 50) posArray[i] = -50;
-            }
-            stars.geometry.attributes.position.needsUpdate = true;
+                // Recovery lerp for scale
+                slimeMesh.scale.x = THREE.MathUtils.lerp(slimeMesh.scale.x, 1, 10 * dt);
+                slimeMesh.scale.y = THREE.MathUtils.lerp(slimeMesh.scale.y, 1, 10 * dt);
+                slimeMesh.scale.z = THREE.MathUtils.lerp(slimeMesh.scale.z, 1, 10 * dt);
 
-            // Spawn asteroids
-            if (Math.random() < 0.03) {
-                const ast = new THREE.Mesh(astGeo, astMat);
-                const angle = Math.random() * Math.PI * 2;
-                const radius = 50;
-                ast.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+                // Calculate velocity for squash/stretch
+                velocity.subVectors(slimeGroup.position, lastPos).divideScalar(dt);
+                const speed = velocity.length();
 
-                const target = new THREE.Vector3((Math.random() - 0.5) * 40, 0, (Math.random() - 0.5) * 40);
-                ast.userData.velocity = target.sub(ast.position).normalize().multiplyScalar(10 * dt + Math.random() * 0.2);
-                ast.userData.rotSpeed = new THREE.Vector3(Math.random(), Math.random(), Math.random()).multiplyScalar(0.05);
-                scene.add(ast);
-                asteroids.push(ast);
-            }
+                if (speed > 5) {
+                    // Moving fast across ground -> stretch in move direction, squash height
+                    slimeMesh.scale.y = Math.max(0.7, 1 - speed * 0.01);
+                    slimeMesh.scale.x = Math.min(1.2, 1 + speed * 0.005);
+                    slimeMesh.scale.z = Math.min(1.2, 1 + speed * 0.005);
 
-            // Update lasers
-            for (let i = lasers.length - 1; i >= 0; i--) {
-                const l = lasers[i];
-                l.position.add(l.userData.velocity);
-                if (l.position.lengthSq() > 10000) {
-                    scene.remove(l);
-                    lasers.splice(i, 1);
-                }
-            }
-
-            // Update asteroids & collisions
-            for (let i = asteroids.length - 1; i >= 0; i--) {
-                let a = asteroids[i];
-                a.position.add(a.userData.velocity);
-                a.rotation.x += a.userData.rotSpeed.x;
-                a.rotation.y += a.userData.rotSpeed.y;
-                a.rotation.z += a.userData.rotSpeed.z;
-
-                let astRemoved = false;
-
-                // Ship collision
-                if (a.position.distanceTo(shipContainer.position) < 3.0) {
-                    createBlast(a.position);
-                    scene.remove(a);
-                    asteroids.splice(i, 1);
-                    addCombo();
-                    astRemoved = true;
-                    // Extra recoil and wobble on hit
-                    shipContainer.position.z -= 2;
-                    ship.rotation.z += Math.PI / 2;
-                    continue;
-                }
-
-                // Laser collision
-                if (!astRemoved) {
-                    for (let j = lasers.length - 1; j >= 0; j--) {
-                        let l = lasers[j];
-                        if (l.position.distanceTo(a.position) < 2.5) {
-                            createBlast(a.position);
-                            scene.remove(a);
-                            asteroids.splice(i, 1);
-                            scene.remove(l);
-                            lasers.splice(j, 1);
-                            addCombo();
-                            astRemoved = true;
-                            break;
-                        }
+                    // Rotate to face velocity
+                    if (velocity.lengthSq() > 0.1) {
+                        const angle = Math.atan2(velocity.x, velocity.z);
+                        slimeGroup.rotation.y = angle;
                     }
-                }
-
-                // Remove out of bounds
-                if (!astRemoved && a.position.lengthSq() > 10000) {
-                    scene.remove(a);
-                    asteroids.splice(i, 1);
-                }
-            }
-
-            // Update particles
-            for (let i = particles.length - 1; i >= 0; i--) {
-                let p = particles[i];
-                p.position.add(p.userData.velocity);
-                p.userData.life -= dt * 2;
-                p.scale.setScalar(Math.max(0, p.userData.life));
-                if (p.userData.life <= 0) {
-                    scene.remove(p);
-                    particles.splice(i, 1);
+                } else {
+                    // Idle wobble
+                    slimeMesh.position.y = 1.2 + Math.sin(t * 6) * 0.1;
+                    slimeMesh.scale.y = 1 + Math.sin(t * 12) * 0.05;
+                    slimeMesh.scale.x = 1 - Math.sin(t * 12) * 0.025;
+                    slimeMesh.scale.z = 1 - Math.sin(t * 12) * 0.025;
                 }
             }
 
+            // Adjust eyes to always somewhat face +Z (camera block)
+            // They are local to slimeGroup, which revolves. Just counter rotate
+            eyeL.position.set(-0.5, 1.1, 1.3);
+            eyeR.position.set(0.5, 1.1, 1.3);
+
+            lastPos.copy(slimeGroup.position);
             renderer.render(scene, camera);
         }
         animate();
