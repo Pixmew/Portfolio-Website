@@ -548,24 +548,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // ── PROJECT CARD HOVER-TO-PLAY ────────────────────────────────────────────
-    const cards = document.querySelectorAll('.project-card[data-vid]');
-    cards.forEach(card => {
-        const vid = card.dataset.vid;
-        const iframe = card.querySelector('.card-iframe');
-
-        if (vid && iframe) {
-            card.addEventListener('mouseenter', () => {
-                // Autoplay mute loop syntax for YouTube embeds
-                iframe.src = `https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=0&rel=0&showinfo=0`;
-            });
-
-            card.addEventListener('mouseleave', () => {
-                iframe.src = '';
-            });
-        }
-    });
-
     // ── SCROLL REVEAL (Intersection Observer) ─────────────────────────────────
     const observerOptions = {
         root: null,
@@ -583,9 +565,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }, observerOptions);
 
-    const revealElements = document.querySelectorAll('.section, .project-card, .about-card, .skill-group, .clink');
+    const revealElements = document.querySelectorAll('.section, .about-card, .skill-group, .clink');
     revealElements.forEach(el => {
         el.classList.add('reveal-item');
         observer.observe(el);
     });
+
+    // ── DYNAMIC PROJECTS LOADING ──────────────────────────────────────────────
+    const container = document.getElementById('projects-container');
+    if (container) {
+        fetch('assets/projects_list.json')
+            .then(res => res.json())
+            .then(projects => {
+                projects.forEach(proj => {
+                    const card = document.createElement('div');
+                    card.className = 'project-card glass-panel reveal-item';
+                    card.dataset.vid = proj.videoId;
+
+                    // Chips HTML
+                    const chipsHtml = (proj.tags || []).map(t => `<span>${t}</span>`).join('');
+
+                    card.innerHTML = `
+                        <div class="card-media">
+                            <div class="card-thumb" style="background-image: url('https://img.youtube.com/vi/${proj.videoId}/maxresdefault.jpg');"></div>
+                            <div class="card-video-wrap">
+                                <iframe class="card-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                            </div>
+                            <div class="card-tag">${proj.category || ''}</div>
+                        </div>
+                        <div class="card-body">
+                            <h3>${proj.title || 'Project'}</h3>
+                            <p>${proj.description || ''}</p>
+                            <div class="card-chips">${chipsHtml}</div>
+                        </div>
+                    `;
+
+                    container.appendChild(card);
+                    observer.observe(card); // observe for scroll reveal
+
+                    // Hover-to-play binding
+                    const iframe = card.querySelector('.card-iframe');
+                    if (proj.videoId && iframe) {
+                        card.addEventListener('mouseenter', () => {
+                            const origin = encodeURIComponent(window.location.origin);
+                            iframe.src = `https://www.youtube.com/embed/${proj.videoId}?autoplay=1&mute=1&loop=1&playlist=${proj.videoId}&controls=0&rel=0&showinfo=0&enablejsapi=1&origin=${origin}`;
+                        });
+                        card.addEventListener('mouseleave', () => {
+                            iframe.src = '';
+                        });
+                    }
+                });
+            })
+            .catch(err => console.error("Error loading projects:", err));
+    }
 });
