@@ -6,6 +6,5 @@ echo   Portfolio will open at: http://localhost:8080
 echo   Close this window to stop the server.
 echo =============================================
 echo.
-call "%~dp0UPDATE_PROJECTS.bat"
 powershell -ExecutionPolicy Bypass -File "%~dp0serve.ps1"
 pause

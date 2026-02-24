@@ -1,77 +1,77 @@
 ﻿[
     {
-        "id":  "army-snake",
-        "description":  "Command a snake-formation of soldiers â€” defeat enemy armies, earn cash and upgrade your military unit.",
-        "tags":  [
-                     "Action",
-                     "Arcade"
-                 ],
-        "category":  "Arcade",
-        "videoId":  "t9O8PL6xgPE",
-        "title":  "Army Snake"
+        "id": "army-snake",
+        "description": "Command a snake-formation of soldiers — defeat enemy armies, earn cash and upgrade your military unit.",
+        "tags": [
+            "Action",
+            "Arcade"
+        ],
+        "category": "Arcade",
+        "videoId": "t9O8PL6xgPE",
+        "title": "Army Snake"
     },
     {
-        "id":  "burger-chef",
-        "description":  "Build the ultimate burger empire by stacking exactly what your hungry customers demand.",
-        "tags":  [
-                     "Unity",
-                     "C#"
-                 ],
-        "category":  "Puzzle",
-        "videoId":  "TbkW4vawJFk",
-        "title":  "Burger Chef"
+        "id": "burger-chef",
+        "description": "Build the ultimate burger empire by stacking exactly what your hungry customers demand.",
+        "tags": [
+            "Unity",
+            "C#"
+        ],
+        "category": "Puzzle",
+        "videoId": "TbkW4vawJFk",
+        "title": "Burger Chef"
     },
     {
-        "id":  "camo-shooter",
-        "description":  "Scan the battlefield, find camouflaged enemies completely hidden in the environment.",
-        "tags":  [
-                     "Hyper Casual"
-                 ],
-        "category":  "Shooter",
-        "videoId":  "bRjcQQOWBy4",
-        "title":  "Camo Shooter 3D"
+        "id": "camo-shooter",
+        "description": "Scan the battlefield, find camouflaged enemies completely hidden in the environment.",
+        "tags": [
+            "Hyper Casual"
+        ],
+        "category": "Shooter",
+        "videoId": "bRjcQQOWBy4",
+        "title": "Camo Shooter 3D"
     },
     {
-        "id":  "drag-and-merge",
-        "description":  "Untangle intertwined lovers â€” click, drag and solve every puzzle to reunite them safely.",
-        "tags":  [
-                     "Puzzle",
-                     "3D"
-                 ],
-        "category":  "Hyper Casual",
-        "videoId":  "DclRxS_hcMc",
-        "title":  "Drag and Merge"
+        "id": "drag-and-merge",
+        "description": "Untangle intertwined lovers — click, drag and solve every puzzle to reunite them safely.",
+        "tags": [
+            "Puzzle",
+            "3D"
+        ],
+        "category": "Hyper Casual",
+        "videoId": "DclRxS_hcMc",
+        "title": "Drag and Merge"
     },
     {
-        "id":  "laundry-restock",
-        "description":  "Relaxing simulation â€” organise a laundry room, sort, fill and restock with satisfying ASMR feedback.",
-        "tags":  [
-                     "Unity",
-                     "C#"
-                 ],
-        "category":  "Simulation",
-        "videoId":  "zb9QKkiSRX8",
-        "title":  "Laundry Restock DIY"
+        "id": "laundry-restock",
+        "description": "Relaxing simulation — organise a laundry room, sort, fill and restock with satisfying ASMR feedback.",
+        "tags": [
+            "Unity",
+            "C#"
+        ],
+        "category": "Simulation",
+        "videoId": "zb9QKkiSRX8",
+        "title": "Laundry Restock DIY"
     },
     {
-        "id":  "myth-monster-hunter",
-        "description":  "Immersive ocean adventure â€” cast lines, catch fish and hunt mythical sea creatures with custom rod physics.",
-        "tags":  [
-                     "Unity",
-                     "C#"
-                 ],
-        "category":  "Adventure",
-        "videoId":  "EBxXDO2tP9I",
-        "title":  "Myth Monster Hunter"
+        "id": "myth-monster-hunter",
+        "description": "Immersive ocean adventure — cast lines, catch fish and hunt mythical sea creatures with custom rod physics.",
+        "tags": [
+            "Unity",
+            "C#"
+        ],
+        "category": "Adventure",
+        "videoId": "EBxXDO2tP9I",
+        "title": "Myth Monster Hunter"
     },
     {
-        "id":  "swipe-attack",
-        "description":  "Swap places with enemies to eliminate them â€” dodge, think fast and survive every challenging level.",
-        "tags":  [
-                     "Hyper Casual"
-                 ],
-        "category":  "Action",
-        "videoId":  "93WNVEmMP9Y",
-        "title":  "Swipe Attack 3D"
+        "id": "swipe-attack",
+        "description": "Swap places with enemies to eliminate them — dodge, think fast and survive every challenging level.",
+        "tags": [
+            "Hyper Casual"
+        ],
+        "category": "Action",
+        "videoId": "93WNVEmMP9Y",
+        "title": "Swipe Attack 3D"
     }
 ]
