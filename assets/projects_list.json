@@ -11,6 +11,17 @@
         "title": "Army Snake"
     },
     {
+        "id": "myth-monster-hunter",
+        "description": "Immersive ocean adventure — cast lines, catch fish and hunt mythical sea creatures with custom rod physics.",
+        "tags": [
+            "Unity",
+            "C#"
+        ],
+        "category": "Adventure",
+        "videoId": "EBxXDO2tP9I",
+        "title": "Myth Monster Hunter"
+    },
+    {
         "id": "burger-chef",
         "description": "Build the ultimate burger empire by stacking exactly what your hungry customers demand.",
         "tags": [
@@ -52,17 +63,6 @@
         "category": "Simulation",
         "videoId": "zb9QKkiSRX8",
         "title": "Laundry Restock DIY"
-    },
-    {
-        "id": "myth-monster-hunter",
-        "description": "Immersive ocean adventure — cast lines, catch fish and hunt mythical sea creatures with custom rod physics.",
-        "tags": [
-            "Unity",
-            "C#"
-        ],
-        "category": "Adventure",
-        "videoId": "EBxXDO2tP9I",
-        "title": "Myth Monster Hunter"
     },
     {
         "id": "swipe-attack",
