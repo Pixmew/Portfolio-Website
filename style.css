@@ -310,7 +310,7 @@ body {
 
 .scroll-cue {
     position: absolute;
-    bottom: 40px;
+    bottom: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -469,6 +469,35 @@ body {
     font-weight: 700;
     margin-bottom: 12px;
     color: var(--text-main);
+}
+
+.card-context {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.card-context.personal {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-context.company {
+    background: rgba(0, 255, 204, 0.15);
+    color: var(--accent);
+    border: 1px solid rgba(0, 255, 204, 0.3);
+}
+
+.context-icon {
+    font-size: 12px;
 }
 
 .card-body p {

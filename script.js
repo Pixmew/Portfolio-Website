@@ -577,13 +577,18 @@ document.addEventListener('DOMContentLoaded', () => {
         fetch('assets/projects_list.json')
             .then(res => res.json())
             .then(projects => {
-                projects.forEach(proj => {
+                projects.filter(p => !p._disabled).forEach(proj => {
                     const card = document.createElement('div');
                     card.className = 'project-card glass-panel reveal-item';
                     card.dataset.vid = proj.videoId;
 
                     // Chips HTML
                     const chipsHtml = (proj.tags || []).map(t => `<span>${t}</span>`).join('');
+
+                    // Context / Company Info
+                    const contextHtml = proj.company
+                        ? `<div class="card-context company"><span class="context-icon">🏢</span> ${proj.company}</div>`
+                        : `<div class="card-context personal"><span class="context-icon">👤</span> Personal Project</div>`;
 
                     card.innerHTML = `
                         <div class="card-media">
@@ -594,6 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             <div class="card-tag">${proj.category || ''}</div>
                         </div>
                         <div class="card-body">
+                            ${contextHtml}
                             <h3>${proj.title || 'Project'}</h3>
                             <p>${proj.description || ''}</p>
                             <div class="card-chips">${chipsHtml}</div>
